@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "scribe"
+  "defaultProject": "scribe",
+  "cli": {
+    "analytics": "bef451db-05f8-4f31-946d-bf657acead40"
+  }
 }
