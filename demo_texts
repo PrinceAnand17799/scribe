@@ -5,11 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Employee Data Table</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="data.js" defer></script>
+  <script src="data.js"></script>
 </head>
 <body>
   <div class="container mt-5">
     <h1>Employee Data</h1>
+    <div class="mb-3">
+      <label for="searchInput" class="form-label">Search By:</label>
+      <select class="form-select" id="searchCriteria">
+        <!-- Search criteria options will be dynamically populated -->
+      </select>
+      <input type="text" class="form-control mt-2" id="searchInput">
+    </div> 
     <table id="employeeTable" class="table table-striped">
       <thead>
         <tr id="tableHeaders">
@@ -34,8 +41,9 @@
   <script>
     const pageSize = 5; // Number of rows per page
     let currentPage = 1;
+    let searchData = jsonData; // Data to search within
 
-    // Function to create table headers
+    // Function to create table headers and search criteria options
     function createTableHeaders() {
       const headersRow = document.querySelector("#tableHeaders");
       const headers = Object.keys(jsonData[0]);
@@ -43,6 +51,12 @@
         const th = document.createElement("th");
         th.textContent = header.charAt(0).toUpperCase() + header.slice(1); // Capitalize first letter
         headersRow.appendChild(th);
+
+        // Populate search criteria options
+        const option = document.createElement("option");
+        option.textContent = header.charAt(0).toUpperCase() + header.slice(1);
+        option.value = header;
+        document.querySelector("#searchCriteria").appendChild(option);
       });
     }
 
@@ -51,10 +65,10 @@
       const tableBody = document.querySelector("#tableBody");
       tableBody.innerHTML = "";
       const startIndex = (currentPage - 1) * pageSize;
-      const endIndex = Math.min(startIndex + pageSize, jsonData.length);
+      const endIndex = Math.min(startIndex + pageSize, searchData.length);
 
       for (let i = startIndex; i < endIndex; i++) {
-        const employee = jsonData[i];
+        const employee = searchData[i];
         const row = document.createElement("tr");
         Object.values(employee).forEach(value => {
           const td = document.createElement("td");
@@ -70,7 +84,7 @@
       const pagination = document.querySelector("#pagination");
       pagination.innerHTML = "";
 
-      const numPages = Math.ceil(jsonData.length / pageSize);
+      const numPages = Math.ceil(searchData.length / pageSize);
       let startPage = Math.max(1, currentPage - 2);
       let endPage = Math.min(numPages, startPage + 4);
       if (endPage - startPage < 4) {
@@ -152,9 +166,20 @@
       const totalPagesElement = document.getElementById("totalPages");
       const currentPageElement = document.getElementById("currentPage");
 
-      totalEmployeesElement.textContent = jsonData.length;
-      totalPagesElement.textContent = Math.ceil(jsonData.length / pageSize);
+      totalEmployeesElement.textContent = searchData.length;
+      totalPagesElement.textContent = Math.ceil(searchData.length / pageSize);
       currentPageElement.textContent = currentPage;
+    }
+
+    // Function to filter data  based on search input and criteria
+    function filterData(searchValue, searchCriteria) {
+      searchData = jsonData.filter(employee =>
+        String(employee[searchCriteria]).toLowerCase().includes(searchValue.toLowerCase())
+      );
+      currentPage = 1;
+      createPagination();
+      populateTableBody();
+      updatePaginationText();
     }
 
     // Execute functions when DOM content is loaded
@@ -162,6 +187,17 @@
       createTableHeaders();
       populateTableBody();
       createPagination();
+
+      const searchInput = document.getElementById("searchInput");
+      const searchCriteria = document.getElementById("searchCriteria");
+
+      searchInput.addEventListener("input", function () {
+        filterData(this.value, searchCriteria.value);
+      });
+
+      searchCriteria.addEventListener("change", function () {
+        filterData(searchInput.value, this.value);
+      });
     });
   </script>
 </body>
