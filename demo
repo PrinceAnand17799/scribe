@@ -3,129 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Selector</title>
+  <title>Dynamic Table</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    .card {
-      border: 1px solid #ddd;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      cursor: pointer;
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
     }
-    .card:hover {
-      background-color: #f9f9f9;
+    th {
+      background-color: #f2f2f2;
     }
-    .card a {
-      text-decoration: none;
-      color: inherit;
+    .sub-header th {
+      background-color: #d9d9d9;
+    }
+    .empty-header {
+      background-color: transparent;
+      border: none;
     }
   </style>
 </head>
 <body>
+  <h1>Medical Insurance Data</h1>
+  <table id="insuranceTable">
+    <thead>
+      <tr>
+        <th class="empty-header"></th>
+        <th colspan="2">Premiums</th>
+        <th colspan="2">Tobacco-free Credits</th>
+        <th colspan="2">Cost of Coverage</th>
+      </tr>
+      <tr class="sub-header">
+        <th>Options</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
 
-  <h1>Project Selector</h1>
-  <form id="projectForm">
-    <label for="bpnSelect">Select BPN:</label>
-    <select id="bpnSelect" name="bpnSelect">
-      <!-- Options will be populated by JavaScript -->
-    </select>
-    <br><br>
-    <label for="linkSelect">Select Link:</label>
-    <select id="linkSelect" name="linkSelect">
-      <option value="link1">Link 1</option>
-      <option value="link2">Link 2</option>
-      <option value="link3">Link 3</option>
-    </select>
-    <br><br>
-    <button type="submit">Submit</button>
-  </form>
-
-  <div id="cardContainer"></div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      fetch('projects.json')
-        .then(response => response.json())
-        .then(projects => {
-          const bpnSelect = document.getElementById('bpnSelect');
-
-          projects.forEach(project => {
-            const option = document.createElement('option');
-            option.value = project.BPN;
-            option.textContent = project.BPN;
-            bpnSelect.appendChild(option);
-          });
-
-          // Initialize card with the first project
-          const defaultProject = projects[0];
-          const defaultLink = defaultProject.link1;
-          displayCard(defaultProject, defaultLink);
-
-          document.getElementById('projectForm').addEventListener('submit', (event) => {
-            event.preventDefault();
-            const selectedBpn = document.getElementById('bpnSelect').value;
-            const selectedLinkKey = document.getElementById('linkSelect').value;
-
-            const selectedProject = projects.find(project => project.BPN === selectedBpn);
-            const selectedLink = selectedProject[selectedLinkKey];
-
-            displayCard(selectedProject, selectedLink);
-          });
-
-          function displayCard(project, link) {
-            const cardContainer = document.getElementById('cardContainer');
-            cardContainer.innerHTML = ''; // Clear previous card
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `<a href="${link}" target="_blank"><h2>${project.BPN}</h2><p>${project.name}</p><p>Division: ${project.division}</p></a>`;
-            
-            cardContainer.appendChild(card);
-          }
-        })
-        .catch(error => console.error('Error fetching the projects:', error));
-    });
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
 
-[
-  {
-    "BPN": "001",
-    "name": "heritage",
-    "division": "Architecture",
-    "link1": "https://www.google.com",
-    "link2": "https://www.google.com",
-    "link3": "https://www.google.com"
-  },
-  {
-    "BPN": "002",
-    "name": "innovation",
-    "division": "Technology",
-    "link1": "https://www.example1.com",
-    "link2": "https://www.example2.com",
-    "link3": "https://www.example3.com"
-  },
-  {
-    "BPN": "003",
-    "name": "sustainability",
-    "division": "Environment",
-    "link1": "https://www.example4.com",
-    "link2": "https://www.example5.com",
-    "link3": "https://www.example6.com"
-  },
-  {
-    "BPN": "004",
-    "name": "technology",
-    "division": "Innovation",
-    "link1": "https://www.example7.com",
-    "link2": "https://www.example8.com",
-    "link3": "https://www.example9.com"
+
+const data = [
+  ["id", "label", "In Network?", "Premiums", "BiweeklyPremiums", "Tobacco Credit", "Biweekly Tobacco Credit", "EECostAnnual", "Biweekly EECostAnnual", "Deductible", "Copay", "HSA", "HSA Eligible", "Out of Network Available", "Provider Directory", "Hyperlink Name"],
+  ["Surest Flex Copay Plan", "Surest Flex Copay Plan **", true, 704.04, 27.08, 390, 15, 314.04, 12.08, 0, 6600, 0, false, true, "https://whyuhc.com/optumcare/benefits#health_care_providers", "Provider Directory"],
+  ["SignatureValue Harmony Plan", "SignatureValue Harmony Plan", true, 1443.12, 55.5, 390, 15, 1053.12, 40.5, 0, 3500, 0, false, false, "https://connect.werally.com/guest/eyJwbGFuTmFtZSI6…VzdCJ9_LWEA-SyoZrUjfjeKx6jT9qd5Q0JdpmdS3fc5UEdaak", "Provider Directory"],
+  ["OptumCare EPO Plan", "OptumCare EPO Plan", true, 1347, 51.81, 390, 15, 957, 36.81, 500, 1750, 0, true, false, "https://whyuhc.com/optumcare/benefits#health_care_providers", "Provider Directory"]
+];
+
+const hideTobaccoCredits = false; // Boolean variable to hide/show Tobacco-free Credits column
+
+function generateTable() {
+  const tableBody = document.getElementById("tableBody");
+  const tableHead = document.querySelector("#insuranceTable thead");
+
+  // Generate table header
+  if (hideTobaccoCredits) {
+    tableHead.innerHTML = `
+      <tr>
+        <th class="empty-header"></th>
+        <th colspan="2">Premiums</th>
+        <th colspan="2">Cost of Coverage</th>
+      </tr>
+      <tr class="sub-header">
+        <th>Options</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+      </tr>
+    `;
+  } else {
+    tableHead.innerHTML = `
+      <tr>
+        <th class="empty-header"></th>
+        <th colspan="2">Premiums</th>
+        <th colspan="2">Tobacco-free Credits</th>
+        <th colspan="2">Cost of Coverage</th>
+      </tr>
+      <tr class="sub-header">
+        <th>Options</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+        <th>Annual</th>
+        <th>Biweekly</th>
+      </tr>
+    `;
   }
-]
+
+  // Generate table rows
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const tr = document.createElement("tr");
+
+    // Options (label with hyperlink name)
+    const optionsTd = document.createElement("td");
+    const label = document.createElement("div");
+    label.textContent = row[1];
+    optionsTd.appendChild(label);
+
+    if (row[12]) { // Check if HSA Eligible
+      const hsaLink = document.createElement("a");
+      hsaLink.href = "https://example.com"; // Demo URL
+      hsaLink.textContent = "HSA Eligible Info";
+      hsaLink.target = "_blank";
+      optionsTd.appendChild(hsaLink);
+      optionsTd.appendChild(document.createElement("br"));
+    }
+
+    const providerLink = document.createElement("a");
+    providerLink.href = row[14]; // Hyperlink URL
+    providerLink.textContent = row[15]; // Hyperlink name
+    providerLink.target = "_blank";
+    optionsTd.appendChild(providerLink);
+
+    tr.appendChild(optionsTd);
+
+    // Premiums (Annual and Biweekly)
+    const annualPremiumTd = document.createElement("td");
+    annualPremiumTd.textContent = `$${row[3]}`;
+    tr.appendChild(annualPremiumTd);
+
+    const biweeklyPremiumTd = document.createElement("td");
+    biweeklyPremiumTd.textContent = `$${row[4]}`;
+    tr.appendChild(biweeklyPremiumTd);
+
+    if (!hideTobaccoCredits) {
+      // Tobacco-free Credits (Annual and Biweekly)
+      const annualTobaccoTd = document.createElement("td");
+      annualTobaccoTd.textContent = `-$${row[5]}`;
+      tr.appendChild(annualTobaccoTd);
+
+      const biweeklyTobaccoTd = document.createElement("td");
+      biweeklyTobaccoTd.textContent = `-$${row[6]}`;
+      tr.appendChild(biweeklyTobaccoTd);
+    }
+
+    // Cost of Coverage (Annual and Biweekly)
+    const annualCostTd = document.createElement("td");
+    annualCostTd.textContent = `$${row[7]}`;
+    tr.appendChild(annualCostTd);
+
+    const biweeklyCostTd = document.createElement("td");
+    biweeklyCostTd.textContent = `$${row[8]}`;
+    tr.appendChild(biweeklyCostTd);
+
+    tableBody.appendChild(tr);
+  }
+}
+
+generateTable();
