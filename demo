@@ -1,167 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Table</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #000;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    .sub-header th {
-      background-color: #d9d9d9;
-    }
-    .empty-header {
-      background-color: transparent;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-  <h1>Medical Insurance Data</h1>
-  <table id="insuranceTable">
-    <thead>
-      <tr>
-        <th class="empty-header"></th>
-        <th colspan="2">Premiums</th>
-        <th colspan="2">Tobacco-free Credits</th>
-        <th colspan="2">Cost of Coverage</th>
-      </tr>
-      <tr class="sub-header">
-        <th>Options</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
-
-  <script src="script.js"></script>
-</body>
-</html>
-
-
-const data = [
-  ["id", "label", "In Network?", "Premiums", "BiweeklyPremiums", "Tobacco Credit", "Biweekly Tobacco Credit", "EECostAnnual", "Biweekly EECostAnnual", "Deductible", "Copay", "HSA", "HSA Eligible", "Out of Network Available", "Provider Directory", "Hyperlink Name"],
-  ["Surest Flex Copay Plan", "Surest Flex Copay Plan **", true, 704.04, 27.08, 390, 15, 314.04, 12.08, 0, 6600, 0, false, true, "https://whyuhc.com/optumcare/benefits#health_care_providers", "Provider Directory"],
-  ["SignatureValue Harmony Plan", "SignatureValue Harmony Plan", true, 1443.12, 55.5, 390, 15, 1053.12, 40.5, 0, 3500, 0, false, false, "https://connect.werally.com/guest/eyJwbGFuTmFtZSI6…VzdCJ9_LWEA-SyoZrUjfjeKx6jT9qd5Q0JdpmdS3fc5UEdaak", "Provider Directory"],
-  ["OptumCare EPO Plan", "OptumCare EPO Plan", true, 1347, 51.81, 390, 15, 957, 36.81, 500, 1750, 0, true, false, "https://whyuhc.com/optumcare/benefits#health_care_providers", "Provider Directory"]
-];
-
-const hideTobaccoCredits = false; // Boolean variable to hide/show Tobacco-free Credits column
-
-function generateTable() {
-  const tableBody = document.getElementById("tableBody");
-  const tableHead = document.querySelector("#insuranceTable thead");
-
-  // Generate table header
-  if (hideTobaccoCredits) {
-    tableHead.innerHTML = `
-      <tr>
-        <th class="empty-header"></th>
-        <th colspan="2">Premiums</th>
-        <th colspan="2">Cost of Coverage</th>
-      </tr>
-      <tr class="sub-header">
-        <th>Options</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-      </tr>
-    `;
-  } else {
-    tableHead.innerHTML = `
-      <tr>
-        <th class="empty-header"></th>
-        <th colspan="2">Premiums</th>
-        <th colspan="2">Tobacco-free Credits</th>
-        <th colspan="2">Cost of Coverage</th>
-      </tr>
-      <tr class="sub-header">
-        <th>Options</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-        <th>Annual</th>
-        <th>Biweekly</th>
-      </tr>
-    `;
-  }
-
-  // Generate table rows
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    const tr = document.createElement("tr");
-
-    // Options (label with hyperlink name)
-    const optionsTd = document.createElement("td");
-    const label = document.createElement("div");
-    label.textContent = row[1];
-    optionsTd.appendChild(label);
-
-    if (row[12]) { // Check if HSA Eligible
-      const hsaLink = document.createElement("a");
-      hsaLink.href = "https://example.com"; // Demo URL
-      hsaLink.textContent = "HSA Eligible Info";
-      hsaLink.target = "_blank";
-      optionsTd.appendChild(hsaLink);
-      optionsTd.appendChild(document.createElement("br"));
-    }
-
-    const providerLink = document.createElement("a");
-    providerLink.href = row[14]; // Hyperlink URL
-    providerLink.textContent = row[15]; // Hyperlink name
-    providerLink.target = "_blank";
-    optionsTd.appendChild(providerLink);
-
-    tr.appendChild(optionsTd);
-
-    // Premiums (Annual and Biweekly)
-    const annualPremiumTd = document.createElement("td");
-    annualPremiumTd.textContent = `$${row[3]}`;
-    tr.appendChild(annualPremiumTd);
-
-    const biweeklyPremiumTd = document.createElement("td");
-    biweeklyPremiumTd.textContent = `$${row[4]}`;
-    tr.appendChild(biweeklyPremiumTd);
-
-    if (!hideTobaccoCredits) {
-      // Tobacco-free Credits (Annual and Biweekly)
-      const annualTobaccoTd = document.createElement("td");
-      annualTobaccoTd.textContent = `-$${row[5]}`;
-      tr.appendChild(annualTobaccoTd);
-
-      const biweeklyTobaccoTd = document.createElement("td");
-      biweeklyTobaccoTd.textContent = `-$${row[6]}`;
-      tr.appendChild(biweeklyTobaccoTd);
-    }
-
-    // Cost of Coverage (Annual and Biweekly)
-    const annualCostTd = document.createElement("td");
-    annualCostTd.textContent = `$${row[7]}`;
-    tr.appendChild(annualCostTd);
-
-    const biweeklyCostTd = document.createElement("td");
-    biweeklyCostTd.textContent = `$${row[8]}`;
-    tr.appendChild(biweeklyCostTd);
-
-    tableBody.appendChild(tr);
-  }
-}
-
-generateTable();
+<div class="rowContainer hpccAccordions" ng-repeat="item in HPCCDetails track by $index">
+        <div ng-show="item.heading" class="detailsHeader">{{item.heading}}</div>
+        <div ng-show="!item.heading" class="qrow"><div class="qlabel">{{item["Design Description"]}}</div><span class="sub-text"> {{item.subtext}} {{item.subsubtext}}</span>
+          <p ng-if="item.lightbox_heading" class="reminder question tag" ng-attr-data-head="{{item.lightbox_heading}}" ng-attr-data-msg="{{item.lightbox_content}}"></p>
+        </div>
+        <div class="trow hide">
+          <div ng-repeat="HPCC in item.orderedPlans track by $index" class="tcell">
+            <div class="tag" style="color:#0860a3">{{HPCC.planName.replace('(Advocate Health System Network Choice)', "***")}}</div>
+            <p ng-bind-html="HPCC.HPCCDesc"></p>
+          </div>
+        </div>
+      </div>
+ 
+var HPCCHead = [];
+  $scope.HPCCElig.forEach(function (plan, ind) {
+    HPCCHead.push('[' + plan + ']');
+  });
+//HPCC QUERY
+  alasql.promise('SELECT [Design Description], [subtext], [subsubtext], [lightbox_heading], [lightbox_content],[heading],' + HPCCHead.toString() + ' FROM xlsx("xls/pem_client.xlsx", {headers:true, sheetid:"MedHPCC"})', [])
+    .then(function (data) {
+      $scope.HPCCDetails = data.map(function (HPCCRow, ind) {
+        HPCC_element = {};
+        HPCC_element["Design Description"] = HPCCRow["Design Description"];
+        HPCC_element["subtext"] = HPCCRow["subtext"];
+        HPCC_element["subsubtext"] = HPCCRow["subsubtext"];
+        HPCC_element["lightbox_heading"] = HPCCRow["lightbox_heading"];
+        HPCC_element["lightbox_content"] = HPCCRow["lightbox_content"];
+        HPCC_element["heading"] = HPCCRow["heading"];
+        delete HPCCRow["Design Description"];
+        delete HPCCRow["subtext"];
+        delete HPCCRow["subsubtext"];
+        delete HPCCRow["lightbox_heading"];
+        delete HPCCRow["lightbox_content"];
+        delete HPCCRow["heading"];
+        HPCC_element.orderedPlans = $scope.getOrderedPlans(HPCCRow);
+        return HPCC_element;
+      });
+      $scope.$apply();
+    })
+    .catch(function(err){
+      console.error(err);
+    });
+ 
+ 
