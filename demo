@@ -1,133 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HPCC Details</title>
-  <style>
-    .rowContainer { margin-bottom: 20px; }
-    .detailsHeader { font-weight: bold; }
-    .qrow { margin-top: 10px; }
-    .qlabel { display: inline-block; width: 200px; font-weight: bold; }
-    .sub-text { display: inline-block; }
-    .trow { margin-top: 10px; }
-    .tcell { padding: 10px; border: 1px solid #ddd; }
-    .hide { display: none; }
-    .tag { color: #0860a3; }
-  </style>
-</head>
-<body>
-  <div id="hpccDetailsContainer"></div>
+ $scope.medRates.forEach(function (rateRow, ind) {
+    
+    if (rateRow[2] && ind > 0) {
+       $scope.HPCCElig.push(rateRow[1]);
+}
+});
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/alasql/0.4.11/alasql.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.1/xlsx.full.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const HPCCHead = [];
-      const HPCCElig = ["Plan A", "Plan B"]; // Example data
-
-      HPCCElig.forEach(function(plan) {
-        HPCCHead.push('[' + plan + ']');
-      });
-
-      alasql.promise('SELECT [Design Description], [subtext], [subsubtext], [lightbox_heading], [lightbox_content],[heading],' + HPCCHead.toString() + ' FROM xlsx("xls/pem_client.xlsx", {headers:true, sheetid:"MedHPCC"})', [])
-        .then(function(data) {
-          const HPCCDetails = data.map(function(HPCCRow) {
-            const HPCC_element = {
-              "Design Description": HPCCRow["Design Description"],
-              "subtext": HPCCRow["subtext"],
-              "subsubtext": HPCCRow["subsubtext"],
-              "lightbox_heading": HPCCRow["lightbox_heading"],
-              "lightbox_content": HPCCRow["lightbox_content"],
-              "heading": HPCCRow["heading"],
-              "orderedPlans": getOrderedPlans(HPCCRow)
-            };
-
-            delete HPCCRow["Design Description"];
-            delete HPCCRow["subtext"];
-            delete HPCCRow["subsubtext"];
-            delete HPCCRow["lightbox_heading"];
-            delete HPCCRow["lightbox_content"];
-            delete HPCCRow["heading"];
-
-            return HPCC_element;
-          });
-
-          renderHPCCDetails(HPCCDetails);
-        })
-        .catch(function(err) {
-          console.error(err);
-        });
-
-      function getOrderedPlans(row) {
-        // Assuming you have a function that processes the row data
-        // This is just a placeholder
-        return [
-          { planName: "Plan 1", HPCCDesc: "Description 1" },
-          { planName: "Plan 2", HPCCDesc: "Description 2" }
-        ];
-      }
-
-      function renderHPCCDetails(details) {
-        const container = document.getElementById('hpccDetailsContainer');
-        details.forEach((item, index) => {
-          const rowContainer = document.createElement('div');
-          rowContainer.classList.add('rowContainer', 'hpccAccordions');
-
-          if (item.heading) {
-            const headerDiv = document.createElement('div');
-            headerDiv.classList.add('detailsHeader');
-            headerDiv.textContent = item.heading;
-            rowContainer.appendChild(headerDiv);
-          } else {
-            const qrowDiv = document.createElement('div');
-            qrowDiv.classList.add('qrow');
-
-            const qlabelDiv = document.createElement('div');
-            qlabelDiv.classList.add('qlabel');
-            qlabelDiv.textContent = item["Design Description"];
-            qrowDiv.appendChild(qlabelDiv);
-
-            const subTextSpan = document.createElement('span');
-            subTextSpan.classList.add('sub-text');
-            subTextSpan.textContent = item.subtext + ' ' + item.subsubtext;
-            qrowDiv.appendChild(subTextSpan);
-
-            if (item.lightbox_heading) {
-              const pTag = document.createElement('p');
-              pTag.classList.add('reminder', 'question', 'tag');
-              pTag.dataset.head = item.lightbox_heading;
-              pTag.dataset.msg = item.lightbox_content;
-              qrowDiv.appendChild(pTag);
+$scope.getOrderedPlans = function (plans) {
+        var orderedPlans = [];
+        $scope.medRates.forEach(function (rateRow, ind) {
+            if (ind && plans[rateRow[1].replace("**", "").replace("*", "").trim()]) {
+                var planElem = {}
+                planElem.planName = rateRow[1];
+                planElem.HPCCDesc = plans[rateRow[1].replace("**", "").replace("*", "").trim()]
+                orderedPlans.push(planElem)
             }
-
-            rowContainer.appendChild(qrowDiv);
-          }
-
-          const trowDiv = document.createElement('div');
-          trowDiv.classList.add('trow', 'hide');
-          item.orderedPlans.forEach(plan => {
-            const tcellDiv = document.createElement('div');
-            tcellDiv.classList.add('tcell');
-
-            const tagDiv = document.createElement('div');
-            tagDiv.classList.add('tag');
-            tagDiv.style.color = '#0860a3';
-            tagDiv.textContent = plan.planName.replace('(Advocate Health System Network Choice)', '***');
-            tcellDiv.appendChild(tagDiv);
-
-            const descP = document.createElement('p');
-            descP.innerHTML = plan.HPCCDesc; // Assuming HPCCDesc can be safely set as innerHTML
-            tcellDiv.appendChild(descP);
-
-            trowDiv.appendChild(tcellDiv);
-          });
-          rowContainer.appendChild(trowDiv);
-
-          container.appendChild(rowContainer);
         });
-      }
-    });
-  </script>
-</body>
-</html>
+        return orderedPlans;
+    }
