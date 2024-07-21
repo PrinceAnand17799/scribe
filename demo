@@ -1,206 +1,222 @@
-<div id="filterWrapper">
-        <div id="chartFilters">
-          <div class="filterHead">Filter by Plan Option</div>
-          <div class="chartFilter">
-            <input type="checkbox" ng-model="chartFilter.HSA" ng-change="applyChartFilter()" />
-            <label>HSA-eligible</label>
-          </div>
-          <div class="chartFilter">
-            <input type="checkbox" ng-model="chartFilter.OON_Availaible" ng-change="applyChartFilter()" />
-            <label>Out-of-Network Coverage Available</label>
-          </div>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chart Filter</title>
+  <style>
+    .filterHead { font-weight: bold; margin-bottom: 10px; }
+    .chartFilter { margin-bottom: 10px; }
+    #chartWrappermsg { display: none; }
+  </style>
+</head>
+<body>
+  <div id="filterWrapper">
+    <div id="chartFilters">
+      <div class="filterHead">Filter by Plan Option</div>
+      <div class="chartFilter">
+        <input type="checkbox" id="HSA" />
+        <label for="HSA">HSA-eligible</label>
       </div>
-      <div id="chartWrapper">
-        <canvas id="chart"></canvas>
+      <div class="chartFilter">
+        <input type="checkbox" id="OON_Availaible" />
+        <label for="OON_Availaible">Out-of-Network Coverage Available</label>
       </div>
-      <div id="chartWrappermsg"></div>
+    </div>
+  </div>
+  <div id="chartWrapper">
+    <canvas id="chart"></canvas>
+  </div>
+  <div id="chartWrappermsg"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const chartFilter = {
+        HSA: false,
+        OON_Availaible: false
+      };
 
-chartData = {}
-  $scope.chartFilter={
-    HSA: false,
-    Rally: false,
-    OON_Availaible: false
-  }
+      const chartData = {
+        labels: [],
+        datasets: [
+          { data: [], stack: 'Stack 1', backgroundColor: '#003c71', label: 'Your Annual Premium' },
+          { data: [], stack: 'Stack 1', backgroundColor: '#aace15', label: 'Deductible' },
+          { data: [], stack: 'Stack 1', backgroundColor: '#84ad67', label: 'Copay/Coinsurance Maximum' },
+          { data: [], stack: 'Stack 0', backgroundColor: '#ffdb00', label: 'HSA' }
+        ]
+      };
 
-$scope.applyChartFilter = function(){
-    $scope.initalizeChartData();
-    $scope.prepChartData();
-    $scope.renderChart();
-  }
+      const config = {
+        isHawaiiZip: function() { return false; } // Example implementation
+      };
 
-$scope.initalizeChartData = function(){
-    chartData = {
-    labels: [],
-    datasets: [
-      { data: [], stack: 'Stack 1', backgroundColor: '#003c71', label: 'Your Annual Premium' },
-      { data: [], stack: 'Stack 1', backgroundColor: '#aace15', label: 'Deductible' },
-      { data: [], stack: 'Stack 1', backgroundColor: '#84ad67', label: 'Copay/Coinsurance Maximum' },
-      { data: [], stack: 'Stack 0', backgroundColor: '#ffdb00', label: 'HSA' }]
-    }
-    if (!$scope.config.isHawaiiZip()){
-      chartData.datasets.splice(3, 0, { data: [], stack: 'Stack 0', backgroundColor: '#0066F5', label: 'Tobacco-free Credits*' })
-    }
+      const medRates = [
+        // Example data
+        ["Header", "Plan A", "Value", 100, null, 200, null, 300, null, 400, 500, 600, true, false],
+        ["Header", "Plan B", "Value", 150, null, 250, null, 350, null, 450, 550, 650, false, true]
+      ];
 
-  $scope.prepChartData = function(){
-    var planshow=[];
-    $scope.medRates.forEach(function (rateRow, ind) {
-      if (ind) {
-        //ADD TO CHART DATA SETS IF NO FILTERS APPLIED 
-        //OR ADD ONLY THOSE OPTIONS THAT QUALIFY THE FILTER
-        if ((!$scope.chartFilter.HSA && !$scope.chartFilter.OON_Availaible) ||
-          ($scope.chartFilter.HSA && !$scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12]) ||
-          ($scope.chartFilter.OON_Availaible && !$scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible == rateRow[13]) ||
-          ($scope.chartFilter.HSA && !$scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12]) ||
-          ($scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12] && $scope.chartFilter.OON_Availaible == rateRow[13]) ||
-          ($scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12] && $scope.chartFilter.OON_Availaible == rateRow[13]) || (!$scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible && $scope.chartFilter.OON_Availaible == rateRow[13])) {
-          $("#chartWrapperNew").hide();
+      function applyChartFilter() {
+        initalizeChartData();
+        prepChartData();
+        renderChart();
+      }
 
-          //  if(!$scope.enableNarrowNetwork && rateRow[1].indexOf("(Advocate Health System Network Choice)")>=0 && $scope.chartFilter.OON_Availaible || rateRow[1].indexOf("Hawaii")>=0 && $scope.chartFilter.HSA || rateRow[1].indexOf("Hawaii")>=0 ) {
-          if (!$scope.enableNarrowNetwork && rateRow[1].indexOf("(Advocate Health System Network Choice)")>=0 && $scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA) {
-            console.log(planshow)
-            if (planshow.length == 0) {
-              $("#chartWrapper").hide();
-              $("#chartWrappermsg").show();
-              $("#chartWrappermsg").html('</div><h4>No applicable options.</h4></div>');
-            } else {
-              $("#chartWrapper").show();
-              $("#chartWrappermsg").hide();
-            }
-
-          }
-          else {
-            //PLAN NAME WITH NET COST: 
-            $("#chartWrapper").show();
-            $("#chartWrappermsg").hide();
-            planshow.push(rateRow[1])
-            if ($scope.enableNarrowNetwork) {
-              if (rateRow[7] == 0) {
-                tot = rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5];
-              } else {
-                tot = rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
-              }
-
-            }
-
-            else {
-              if (rateRow[7] == 0) {
-                tot = rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5];
-              }
-              else {
-                tot = rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
-              }
-            }
-
-
-            chartData.labels.push([rateRow[1].replace('(Advocate Health System Network Choice)', "***").trim(),
-            "(Net Cost: $" + tot.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + ")"]);
-
-            chartData.datasets[0].data.push((rateRow[3]));//Premium+Spousal
-            chartData.datasets[1].data.push(rateRow[9]);//Deductible
-            chartData.datasets[2].data.push(rateRow[10]);//Copay 
-            if (!$scope.config.isHawaiiZip()) {
-              chartData.datasets[3].data.push(rateRow[5]);//Tobacoo
-              if ($scope.enableNarrowNetwork)
-              chartData.datasets[4].data.push(rateRow[11]);//HSA - NarrowNetwork
-              else
-              chartData.datasets[4].data.push(rateRow[11]);//HSA - NOT NarrowNetwork 
-            } else {
-              if ($scope.enableNarrowNetwork)
-              chartData.datasets[3].data.push(rateRow[11]);//HSA - NarrowNetwork
-              else
-              chartData.datasets[3].data.push(rateRow[11]);//HSA - NOT NarrowNetwork 
-            }
-             
-            
-
-          }
+      function initalizeChartData() {
+        chartData.labels = [];
+        chartData.datasets = [
+          { data: [], stack: 'Stack 1', backgroundColor: '#003c71', label: 'Your Annual Premium' },
+          { data: [], stack: 'Stack 1', backgroundColor: '#aace15', label: 'Deductible' },
+          { data: [], stack: 'Stack 1', backgroundColor: '#84ad67', label: 'Copay/Coinsurance Maximum' },
+          { data: [], stack: 'Stack 0', backgroundColor: '#ffdb00', label: 'HSA' }
+        ];
+        if (!config.isHawaiiZip()) {
+          chartData.datasets.splice(3, 0, { data: [], stack: 'Stack 0', backgroundColor: '#0066F5', label: 'Tobacco-free Credits*' });
         }
       }
-      else {
-        console.log("IN HERE");
-        console.log(chartData);
-        $("#chartWrapper").hide();
-        $("#chartWrappermsg").show();
-        $("#chartWrappermsg").html('</div><h4>No applicable options.</h4></div>');
 
-      }
-    })      
-  }
-  $scope.renderChart = function(){
-      console.log(chartData);
-    var heightOfGraph = 200 + 40 * (chartData.labels.length);
-        var heightOfGraphContainer;
-        if(chartData.labels.length<=2){
-          heightOfGraphContainer = 2*heightOfGraph;
-          heightOfGraph = 1.9*heightOfGraph;
-        }else{
-          heightOfGraphContainer = heightOfGraph+10;
-        }
-        $("#chartWrapper").html('<div style="width:90%;margin:0 auto;height:' + heightOfGraphContainer + 'px;overflow-y:auto;"><div style="width:100%;margin:0 auto;height:' + heightOfGraph + 'px;"><canvas id="chart"></canvas></div></div>');
-    var ctx = document.getElementById('chart');
-    var myChart = new Chart(ctx, {
-      type: 'horizontalBar',
-      data: chartData,
-      options: {
-        responsive:true,
-        maintainAspectRatio: false,
-        scales: {
-          xAxes: [{
-            stacked: true,
-            gridLines: { display: true },
-            ticks: {
-              callback: function(label, index, labels) {
-                if(isNaN(label)){
-                return "";
-                }else {
-                  return "$ "+Number(label).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      function prepChartData() {
+        const planshow = [];
+        medRates.forEach(function(rateRow, ind) {
+          if (ind) {
+            if ((!chartFilter.HSA && !chartFilter.OON_Availaible) ||
+              (chartFilter.HSA && !chartFilter.OON_Availaible && chartFilter.HSA == rateRow[12]) ||
+              (chartFilter.OON_Availaible && !chartFilter.HSA && chartFilter.OON_Availaible == rateRow[13]) ||
+              (chartFilter.HSA && chartFilter.OON_Availaible && chartFilter.HSA == rateRow[12] && chartFilter.OON_Availaible == rateRow[13])) {
+              
+              document.getElementById('chartWrapperNew').style.display = 'none';
+
+              if (!enableNarrowNetwork && rateRow[1].includes("(Advocate Health System Network Choice)") && chartFilter.OON_Availaible && chartFilter.HSA) {
+                if (planshow.length == 0) {
+                  document.getElementById('chartWrapper').style.display = 'none';
+                  document.getElementById('chartWrappermsg').style.display = 'block';
+                  document.getElementById('chartWrappermsg').innerHTML = '</div><h4>No applicable options.</h4></div>';
+                } else {
+                  document.getElementById('chartWrapper').style.display = 'block';
+                  document.getElementById('chartWrappermsg').style.display = 'none';
                 }
-               
+              } else {
+                document.getElementById('chartWrapper').style.display = 'block';
+                document.getElementById('chartWrappermsg').style.display = 'none';
+                planshow.push(rateRow[1]);
+
+                let tot;
+                if (enableNarrowNetwork) {
+                  tot = rateRow[7] === 0
+                    ? rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5]
+                    : rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
+                } else {
+                  tot = rateRow[7] === 0
+                    ? rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5]
+                    : rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
+                }
+
+                chartData.labels.push([rateRow[1].replace('(Advocate Health System Network Choice)', "***").trim(), "(Net Cost: $" + tot.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + ")"]);
+
+                chartData.datasets[0].data.push(rateRow[3]);
+                chartData.datasets[1].data.push(rateRow[9]);
+                chartData.datasets[2].data.push(rateRow[10]);
+                if (!config.isHawaiiZip()) {
+                  chartData.datasets[3].data.push(rateRow[5]);
+                  chartData.datasets[4].data.push(rateRow[11]);
+                } else {
+                  chartData.datasets[3].data.push(rateRow[11]);
+                }
               }
             }
-          }],
-          yAxes: [{
-            barThickness:15,
-            categoryPercentage:0.7,
-            barPercentage: 0.2,
-            gridLines: { display: false }
-          }]
-          },
-		tooltips: {
-            position: "nearest",
-			mode: 'label',
-			callbacks: {
-			  afterTitle: function() {
-				  window.chartHoverTotal = 0;
-			  },
-			  label: function(tooltipItem, data) {
-                          var dataPoint = data.datasets[tooltipItem.datasetIndex].label;
-                          var dataNote="";
-                          var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                          if(tooltipItem.datasetIndex==3){
-                            //dataNote = " can reduce your deductible or you can save";
-                            window.chartHoverTotal -= Number.parseFloat(valor);
-                          } else if(tooltipItem.datasetIndex==4){
-                            window.chartHoverTotal -= Number.parseFloat(valor);
-                            //dataNote = " reduces your premium";
-                          } else if(tooltipItem.datasetIndex==5){
-                            window.chartHoverTotal -= Number.parseFloat(valor);
-                            dataNote = " can reduce your deductible or you can save";
-                          }
-                          else
-                            window.chartHoverTotal += Number.parseFloat(valor);
-                          return dataPoint + dataNote + ": $" + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
-                      },
-			  footer: function() {
-				  return "TOTAL: $" + window.chartHoverTotal.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
-			  }
-			}
-		}
+          } else {
+            console.log("IN HERE");
+            console.log(chartData);
+            document.getElementById('chartWrapper').style.display = 'none';
+            document.getElementById('chartWrappermsg').style.display = 'block';
+            document.getElementById('chartWrappermsg').innerHTML = '</div><h4>No applicable options.</h4></div>';
+          }
+        });
       }
+
+      function renderChart() {
+        console.log(chartData);
+        const heightOfGraph = 200 + 40 * (chartData.labels.length);
+        const heightOfGraphContainer = chartData.labels.length <= 2
+          ? 2 * heightOfGraph
+          : heightOfGraph + 10;
+
+        document.getElementById('chartWrapper').innerHTML = `
+          <div style="width:90%;margin:0 auto;height:${heightOfGraphContainer}px;overflow-y:auto;">
+            <div style="width:100%;margin:0 auto;height:${heightOfGraph}px;">
+              <canvas id="chart"></canvas>
+            </div>
+          </div>
+        `;
+
+        const ctx = document.getElementById('chart');
+        const myChart = new Chart(ctx, {
+          type: 'horizontalBar',
+          data: chartData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: true,
+                grid: { display: true },
+                ticks: {
+                  callback: function(label) {
+                    return isNaN(label) ? "" : "$ " + Number(label).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  }
+                }
+              },
+              y: {
+                barThickness: 15,
+                categoryPercentage: 0.7,
+                barPercentage: 0.2,
+                grid: { display: false }
+              }
+            },
+            plugins: {
+              tooltip: {
+                position: "nearest",
+                mode: 'label',
+                callbacks: {
+                  afterTitle: function() {
+                    window.chartHoverTotal = 0;
+                  },
+                  label: function(tooltipItem) {
+                    const dataPoint = tooltipItem.dataset.label;
+                    let dataNote = "";
+                    const valor = tooltipItem.raw;
+                    if (tooltipItem.datasetIndex === 3) {
+                      window.chartHoverTotal -= Number.parseFloat(valor);
+                    } else if (tooltipItem.datasetIndex === 4) {
+                      window.chartHoverTotal -= Number.parseFloat(valor);
+                    } else {
+                      window.chartHoverTotal += Number.parseFloat(valor);
+                    }
+                    return `${dataPoint}${dataNote}: $${valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}`;
+                  },
+                  footer: function() {
+                    return `TOTAL: $${window.chartHoverTotal.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      document.getElementById('HSA').addEventListener('change', function() {
+        chartFilter.HSA = this.checked;
+        applyChartFilter();
+      });
+
+      document.getElementById('OON_Availaible').addEventListener('change', function() {
+        chartFilter.OON_Availaible = this.checked;
+        applyChartFilter();
+      });
+
+      applyChartFilter();
     });
-  }
-  $scope.initalizeChartData();
-  $scope.prepChartData();
-  $scope.renderChart();
+  </script>
+</body>
+</html>
