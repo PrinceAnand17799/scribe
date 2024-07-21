@@ -1,146 +1,206 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HPCC Details</title>
-  <style>
-    .rowContainer { margin-bottom: 20px; }
-    .detailsHeader { font-weight: bold; }
-    .qrow { margin-top: 10px; }
-    .qlabel { display: inline-block; width: 200px; font-weight: bold; }
-    .sub-text { display: inline-block; }
-    .trow { margin-top: 10px; }
-    .tcell { padding: 10px; border: 1px solid #ddd; }
-    .hide { display: none; }
-    .tag { color: #0860a3; }
-  </style>
-</head>
-<body>
-  <div id="hpccDetailsContainer"></div>
+<div id="filterWrapper">
+        <div id="chartFilters">
+          <div class="filterHead">Filter by Plan Option</div>
+          <div class="chartFilter">
+            <input type="checkbox" ng-model="chartFilter.HSA" ng-change="applyChartFilter()" />
+            <label>HSA-eligible</label>
+          </div>
+          <div class="chartFilter">
+            <input type="checkbox" ng-model="chartFilter.OON_Availaible" ng-change="applyChartFilter()" />
+            <label>Out-of-Network Coverage Available</label>
+          </div>
+        </div>
+      </div>
+      <div id="chartWrapper">
+        <canvas id="chart"></canvas>
+      </div>
+      <div id="chartWrappermsg"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/alasql/0.4.11/alasql.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.1/xlsx.full.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const HPCCElig = [];
-      const medRates = [
-        // Example data
-        ["Header1", "Plan A", "Some Value"],
-        ["Header2", "Plan B", "Another Value"]
-      ];
 
-      medRates.forEach(function(rateRow, ind) {
-        if (rateRow[2] && ind > 0) {
-          HPCCElig.push(rateRow[1]);
-        }
-      });
+chartData = {}
+  $scope.chartFilter={
+    HSA: false,
+    Rally: false,
+    OON_Availaible: false
+  }
 
-      const HPCCHead = HPCCElig.map(plan => '[' + plan + ']');
+$scope.applyChartFilter = function(){
+    $scope.initalizeChartData();
+    $scope.prepChartData();
+    $scope.renderChart();
+  }
 
-      alasql.promise('SELECT [Design Description], [subtext], [subsubtext], [lightbox_heading], [lightbox_content],[heading],' + HPCCHead.toString() + ' FROM xlsx("xls/pem_client.xlsx", {headers:true, sheetid:"MedHPCC"})', [])
-        .then(function(data) {
-          const HPCCDetails = data.map(function(HPCCRow) {
-            const HPCC_element = {
-              "Design Description": HPCCRow["Design Description"],
-              "subtext": HPCCRow["subtext"],
-              "subsubtext": HPCCRow["subsubtext"],
-              "lightbox_heading": HPCCRow["lightbox_heading"],
-              "lightbox_content": HPCCRow["lightbox_content"],
-              "heading": HPCCRow["heading"],
-              "orderedPlans": getOrderedPlans(HPCCRow, medRates)
-            };
+$scope.initalizeChartData = function(){
+    chartData = {
+    labels: [],
+    datasets: [
+      { data: [], stack: 'Stack 1', backgroundColor: '#003c71', label: 'Your Annual Premium' },
+      { data: [], stack: 'Stack 1', backgroundColor: '#aace15', label: 'Deductible' },
+      { data: [], stack: 'Stack 1', backgroundColor: '#84ad67', label: 'Copay/Coinsurance Maximum' },
+      { data: [], stack: 'Stack 0', backgroundColor: '#ffdb00', label: 'HSA' }]
+    }
+    if (!$scope.config.isHawaiiZip()){
+      chartData.datasets.splice(3, 0, { data: [], stack: 'Stack 0', backgroundColor: '#0066F5', label: 'Tobacco-free Credits*' })
+    }
 
-            delete HPCCRow["Design Description"];
-            delete HPCCRow["subtext"];
-            delete HPCCRow["subsubtext"];
-            delete HPCCRow["lightbox_heading"];
-            delete HPCCRow["lightbox_content"];
-            delete HPCCRow["heading"];
+  $scope.prepChartData = function(){
+    var planshow=[];
+    $scope.medRates.forEach(function (rateRow, ind) {
+      if (ind) {
+        //ADD TO CHART DATA SETS IF NO FILTERS APPLIED 
+        //OR ADD ONLY THOSE OPTIONS THAT QUALIFY THE FILTER
+        if ((!$scope.chartFilter.HSA && !$scope.chartFilter.OON_Availaible) ||
+          ($scope.chartFilter.HSA && !$scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12]) ||
+          ($scope.chartFilter.OON_Availaible && !$scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible == rateRow[13]) ||
+          ($scope.chartFilter.HSA && !$scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12]) ||
+          ($scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12] && $scope.chartFilter.OON_Availaible == rateRow[13]) ||
+          ($scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA == rateRow[12] && $scope.chartFilter.OON_Availaible == rateRow[13]) || (!$scope.chartFilter.HSA && $scope.chartFilter.OON_Availaible && $scope.chartFilter.OON_Availaible == rateRow[13])) {
+          $("#chartWrapperNew").hide();
 
-            return HPCC_element;
-          });
-
-          renderHPCCDetails(HPCCDetails);
-        })
-        .catch(function(err) {
-          console.error(err);
-        });
-
-      function getOrderedPlans(plans, medRates) {
-        const orderedPlans = [];
-        medRates.forEach(function(rateRow, ind) {
-          if (ind && plans[rateRow[1].replace("**", "").replace("*", "").trim()]) {
-            const planElem = {
-              planName: rateRow[1],
-              HPCCDesc: plans[rateRow[1].replace("**", "").replace("*", "").trim()]
-            };
-            orderedPlans.push(planElem);
-          }
-        });
-        return orderedPlans;
-      }
-
-      function renderHPCCDetails(details) {
-        const container = document.getElementById('hpccDetailsContainer');
-        details.forEach((item, index) => {
-          const rowContainer = document.createElement('div');
-          rowContainer.classList.add('rowContainer', 'hpccAccordions');
-
-          if (item.heading) {
-            const headerDiv = document.createElement('div');
-            headerDiv.classList.add('detailsHeader');
-            headerDiv.textContent = item.heading;
-            rowContainer.appendChild(headerDiv);
-          } else {
-            const qrowDiv = document.createElement('div');
-            qrowDiv.classList.add('qrow');
-
-            const qlabelDiv = document.createElement('div');
-            qlabelDiv.classList.add('qlabel');
-            qlabelDiv.textContent = item["Design Description"];
-            qrowDiv.appendChild(qlabelDiv);
-
-            const subTextSpan = document.createElement('span');
-            subTextSpan.classList.add('sub-text');
-            subTextSpan.textContent = item.subtext + ' ' + item.subsubtext;
-            qrowDiv.appendChild(subTextSpan);
-
-            if (item.lightbox_heading) {
-              const pTag = document.createElement('p');
-              pTag.classList.add('reminder', 'question', 'tag');
-              pTag.dataset.head = item.lightbox_heading;
-              pTag.dataset.msg = item.lightbox_content;
-              qrowDiv.appendChild(pTag);
+          //  if(!$scope.enableNarrowNetwork && rateRow[1].indexOf("(Advocate Health System Network Choice)")>=0 && $scope.chartFilter.OON_Availaible || rateRow[1].indexOf("Hawaii")>=0 && $scope.chartFilter.HSA || rateRow[1].indexOf("Hawaii")>=0 ) {
+          if (!$scope.enableNarrowNetwork && rateRow[1].indexOf("(Advocate Health System Network Choice)")>=0 && $scope.chartFilter.OON_Availaible && $scope.chartFilter.HSA) {
+            console.log(planshow)
+            if (planshow.length == 0) {
+              $("#chartWrapper").hide();
+              $("#chartWrappermsg").show();
+              $("#chartWrappermsg").html('</div><h4>No applicable options.</h4></div>');
+            } else {
+              $("#chartWrapper").show();
+              $("#chartWrappermsg").hide();
             }
 
-            rowContainer.appendChild(qrowDiv);
           }
+          else {
+            //PLAN NAME WITH NET COST: 
+            $("#chartWrapper").show();
+            $("#chartWrappermsg").hide();
+            planshow.push(rateRow[1])
+            if ($scope.enableNarrowNetwork) {
+              if (rateRow[7] == 0) {
+                tot = rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5];
+              } else {
+                tot = rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
+              }
 
-          const trowDiv = document.createElement('div');
-          trowDiv.classList.add('trow', 'hide');
-          item.orderedPlans.forEach(plan => {
-            const tcellDiv = document.createElement('div');
-            tcellDiv.classList.add('tcell');
+            }
 
-            const tagDiv = document.createElement('div');
-            tagDiv.classList.add('tag');
-            tagDiv.style.color = '#0860a3';
-            tagDiv.textContent = plan.planName.replace('(Advocate Health System Network Choice)', '***');
-            tcellDiv.appendChild(tagDiv);
+            else {
+              if (rateRow[7] == 0) {
+                tot = rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5];
+              }
+              else {
+                tot = rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
+              }
+            }
 
-            const descP = document.createElement('p');
-            descP.innerHTML = plan.HPCCDesc; // Assuming HPCCDesc can be safely set as innerHTML
-            tcellDiv.appendChild(descP);
 
-            trowDiv.appendChild(tcellDiv);
-          });
-          rowContainer.appendChild(trowDiv);
+            chartData.labels.push([rateRow[1].replace('(Advocate Health System Network Choice)', "***").trim(),
+            "(Net Cost: $" + tot.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + ")"]);
 
-          container.appendChild(rowContainer);
-        });
+            chartData.datasets[0].data.push((rateRow[3]));//Premium+Spousal
+            chartData.datasets[1].data.push(rateRow[9]);//Deductible
+            chartData.datasets[2].data.push(rateRow[10]);//Copay 
+            if (!$scope.config.isHawaiiZip()) {
+              chartData.datasets[3].data.push(rateRow[5]);//Tobacoo
+              if ($scope.enableNarrowNetwork)
+              chartData.datasets[4].data.push(rateRow[11]);//HSA - NarrowNetwork
+              else
+              chartData.datasets[4].data.push(rateRow[11]);//HSA - NOT NarrowNetwork 
+            } else {
+              if ($scope.enableNarrowNetwork)
+              chartData.datasets[3].data.push(rateRow[11]);//HSA - NarrowNetwork
+              else
+              chartData.datasets[3].data.push(rateRow[11]);//HSA - NOT NarrowNetwork 
+            }
+             
+            
+
+          }
+        }
+      }
+      else {
+        console.log("IN HERE");
+        console.log(chartData);
+        $("#chartWrapper").hide();
+        $("#chartWrappermsg").show();
+        $("#chartWrappermsg").html('</div><h4>No applicable options.</h4></div>');
+
+      }
+    })      
+  }
+  $scope.renderChart = function(){
+      console.log(chartData);
+    var heightOfGraph = 200 + 40 * (chartData.labels.length);
+        var heightOfGraphContainer;
+        if(chartData.labels.length<=2){
+          heightOfGraphContainer = 2*heightOfGraph;
+          heightOfGraph = 1.9*heightOfGraph;
+        }else{
+          heightOfGraphContainer = heightOfGraph+10;
+        }
+        $("#chartWrapper").html('<div style="width:90%;margin:0 auto;height:' + heightOfGraphContainer + 'px;overflow-y:auto;"><div style="width:100%;margin:0 auto;height:' + heightOfGraph + 'px;"><canvas id="chart"></canvas></div></div>');
+    var ctx = document.getElementById('chart');
+    var myChart = new Chart(ctx, {
+      type: 'horizontalBar',
+      data: chartData,
+      options: {
+        responsive:true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [{
+            stacked: true,
+            gridLines: { display: true },
+            ticks: {
+              callback: function(label, index, labels) {
+                if(isNaN(label)){
+                return "";
+                }else {
+                  return "$ "+Number(label).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                }
+               
+              }
+            }
+          }],
+          yAxes: [{
+            barThickness:15,
+            categoryPercentage:0.7,
+            barPercentage: 0.2,
+            gridLines: { display: false }
+          }]
+          },
+		tooltips: {
+            position: "nearest",
+			mode: 'label',
+			callbacks: {
+			  afterTitle: function() {
+				  window.chartHoverTotal = 0;
+			  },
+			  label: function(tooltipItem, data) {
+                          var dataPoint = data.datasets[tooltipItem.datasetIndex].label;
+                          var dataNote="";
+                          var valor = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                          if(tooltipItem.datasetIndex==3){
+                            //dataNote = " can reduce your deductible or you can save";
+                            window.chartHoverTotal -= Number.parseFloat(valor);
+                          } else if(tooltipItem.datasetIndex==4){
+                            window.chartHoverTotal -= Number.parseFloat(valor);
+                            //dataNote = " reduces your premium";
+                          } else if(tooltipItem.datasetIndex==5){
+                            window.chartHoverTotal -= Number.parseFloat(valor);
+                            dataNote = " can reduce your deductible or you can save";
+                          }
+                          else
+                            window.chartHoverTotal += Number.parseFloat(valor);
+                          return dataPoint + dataNote + ": $" + valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+                      },
+			  footer: function() {
+				  return "TOTAL: $" + window.chartHoverTotal.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+			  }
+			}
+		}
       }
     });
-  </script>
-</body>
-</html>
+  }
+  $scope.initalizeChartData();
+  $scope.prepChartData();
+  $scope.renderChart();
