@@ -2,221 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Responsive Landing Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chart Filter</title>
   <style>
-    .filterHead { font-weight: bold; margin-bottom: 10px; }
-    .chartFilter { margin-bottom: 10px; }
-    #chartWrappermsg { display: none; }
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Header Styles */
+    header {
+      padding: 20px;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    hr {
+      margin: 0;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+
+    /* Main Section Styles */
+    .main-section {
+      display: flex;
+      flex-wrap: wrap;
+      /* min-height: calc(100vh - 62px); Adjusted for header and divider height */
+    }
+    .image-container,
+    .text-container {
+      flex: 1 1 50%;
+    }
+    .image-container {
+      padding: 20px;
+    }
+    .image-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .text-container {
+      display: flex;
+      justify-content: center;  /* Horizontally center if needed */
+      align-items: center;      /* Vertically center the text */
+      padding: 20px;
+    }
+    .text-content p {
+      margin: 10px 0;
+      font-size: 18px;
+      /* Text size is independent of the image */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .image-container,
+      .text-container {
+        flex: 1 1 100%;
+      }
+      .main-section {
+        min-height: auto; /* Let content determine height on smaller screens */
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="filterWrapper">
-    <div id="chartFilters">
-      <div class="filterHead">Filter by Plan Option</div>
-      <div class="chartFilter">
-        <input type="checkbox" id="HSA" />
-        <label for="HSA">HSA-eligible</label>
-      </div>
-      <div class="chartFilter">
-        <input type="checkbox" id="OON_Availaible" />
-        <label for="OON_Availaible">Out-of-Network Coverage Available</label>
+  <header>
+    <div class="logo">Your Logo</div>
+  </header>
+  <hr>
+  <section class="main-section">
+    <!-- Left Side: Image -->
+    <div class="image-container">
+      <img src="https://cdn.pixabay.com/photo/2019/05/16/20/15/online-4208112_1280.jpg" alt="Placeholder Image">
+    </div>
+    <!-- Right Side: Text -->
+    <div class="text-container">
+      <div class="text-content">
+        <p>First line of text Lorem ipsum dolor sit amet, consectetur adipisicing elit. Hic voluptatum, beatae ullam, ratione quas unde nobis vitae totam voluptatibus consequuntur repellendus harum! Repellendus velit, sit quidem est temporibus nam ipsam?</p>
+        <p>Second line of text</p>
+        <p>Third line of text</p>
+        <p>Fourth line of text</p>
       </div>
     </div>
-  </div>
-  <div id="chartWrapper">
-    <canvas id="chart"></canvas>
-  </div>
-  <div id="chartWrappermsg"></div>
+  </section>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+  <!-- Optional JavaScript -->
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const chartFilter = {
-        HSA: false,
-        OON_Availaible: false
-      };
-
-      const chartData = {
-        labels: [],
-        datasets: [
-          { data: [], stack: 'Stack 1', backgroundColor: '#003c71', label: 'Your Annual Premium' },
-          { data: [], stack: 'Stack 1', backgroundColor: '#aace15', label: 'Deductible' },
-          { data: [], stack: 'Stack 1', backgroundColor: '#84ad67', label: 'Copay/Coinsurance Maximum' },
-          { data: [], stack: 'Stack 0', backgroundColor: '#ffdb00', label: 'HSA' }
-        ]
-      };
-
-      const config = {
-        isHawaiiZip: function() { return false; } // Example implementation
-      };
-
-      const medRates = [
-        // Example data
-        ["Header", "Plan A", "Value", 100, null, 200, null, 300, null, 400, 500, 600, true, false],
-        ["Header", "Plan B", "Value", 150, null, 250, null, 350, null, 450, 550, 650, false, true]
-      ];
-
-      function applyChartFilter() {
-        initalizeChartData();
-        prepChartData();
-        renderChart();
-      }
-
-      function initalizeChartData() {
-        chartData.labels = [];
-        chartData.datasets = [
-          { data: [], stack: 'Stack 1', backgroundColor: '#003c71', label: 'Your Annual Premium' },
-          { data: [], stack: 'Stack 1', backgroundColor: '#aace15', label: 'Deductible' },
-          { data: [], stack: 'Stack 1', backgroundColor: '#84ad67', label: 'Copay/Coinsurance Maximum' },
-          { data: [], stack: 'Stack 0', backgroundColor: '#ffdb00', label: 'HSA' }
-        ];
-        if (!config.isHawaiiZip()) {
-          chartData.datasets.splice(3, 0, { data: [], stack: 'Stack 0', backgroundColor: '#0066F5', label: 'Tobacco-free Credits*' });
-        }
-      }
-
-      function prepChartData() {
-        const planshow = [];
-        medRates.forEach(function(rateRow, ind) {
-          if (ind) {
-            if ((!chartFilter.HSA && !chartFilter.OON_Availaible) ||
-              (chartFilter.HSA && !chartFilter.OON_Availaible && chartFilter.HSA == rateRow[12]) ||
-              (chartFilter.OON_Availaible && !chartFilter.HSA && chartFilter.OON_Availaible == rateRow[13]) ||
-              (chartFilter.HSA && chartFilter.OON_Availaible && chartFilter.HSA == rateRow[12] && chartFilter.OON_Availaible == rateRow[13])) {
-              
-              document.getElementById('chartWrapperNew').style.display = 'none';
-
-              if (!enableNarrowNetwork && rateRow[1].includes("(Advocate Health System Network Choice)") && chartFilter.OON_Availaible && chartFilter.HSA) {
-                if (planshow.length == 0) {
-                  document.getElementById('chartWrapper').style.display = 'none';
-                  document.getElementById('chartWrappermsg').style.display = 'block';
-                  document.getElementById('chartWrappermsg').innerHTML = '</div><h4>No applicable options.</h4></div>';
-                } else {
-                  document.getElementById('chartWrapper').style.display = 'block';
-                  document.getElementById('chartWrappermsg').style.display = 'none';
-                }
-              } else {
-                document.getElementById('chartWrapper').style.display = 'block';
-                document.getElementById('chartWrappermsg').style.display = 'none';
-                planshow.push(rateRow[1]);
-
-                let tot;
-                if (enableNarrowNetwork) {
-                  tot = rateRow[7] === 0
-                    ? rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5]
-                    : rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
-                } else {
-                  tot = rateRow[7] === 0
-                    ? rateRow[3] + rateRow[9] + rateRow[10] - rateRow[11] - rateRow[5] - rateRow[5]
-                    : rateRow[7] + rateRow[9] + rateRow[10] - rateRow[11];
-                }
-
-                chartData.labels.push([rateRow[1].replace('(Advocate Health System Network Choice)', "***").trim(), "(Net Cost: $" + tot.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + ")"]);
-
-                chartData.datasets[0].data.push(rateRow[3]);
-                chartData.datasets[1].data.push(rateRow[9]);
-                chartData.datasets[2].data.push(rateRow[10]);
-                if (!config.isHawaiiZip()) {
-                  chartData.datasets[3].data.push(rateRow[5]);
-                  chartData.datasets[4].data.push(rateRow[11]);
-                } else {
-                  chartData.datasets[3].data.push(rateRow[11]);
-                }
-              }
-            }
-          } else {
-            console.log("IN HERE");
-            console.log(chartData);
-            document.getElementById('chartWrapper').style.display = 'none';
-            document.getElementById('chartWrappermsg').style.display = 'block';
-            document.getElementById('chartWrappermsg').innerHTML = '</div><h4>No applicable options.</h4></div>';
-          }
-        });
-      }
-
-      function renderChart() {
-        console.log(chartData);
-        const heightOfGraph = 200 + 40 * (chartData.labels.length);
-        const heightOfGraphContainer = chartData.labels.length <= 2
-          ? 2 * heightOfGraph
-          : heightOfGraph + 10;
-
-        document.getElementById('chartWrapper').innerHTML = `
-          <div style="width:90%;margin:0 auto;height:${heightOfGraphContainer}px;overflow-y:auto;">
-            <div style="width:100%;margin:0 auto;height:${heightOfGraph}px;">
-              <canvas id="chart"></canvas>
-            </div>
-          </div>
-        `;
-
-        const ctx = document.getElementById('chart');
-        const myChart = new Chart(ctx, {
-          type: 'horizontalBar',
-          data: chartData,
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                stacked: true,
-                grid: { display: true },
-                ticks: {
-                  callback: function(label) {
-                    return isNaN(label) ? "" : "$ " + Number(label).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                  }
-                }
-              },
-              y: {
-                barThickness: 15,
-                categoryPercentage: 0.7,
-                barPercentage: 0.2,
-                grid: { display: false }
-              }
-            },
-            plugins: {
-              tooltip: {
-                position: "nearest",
-                mode: 'label',
-                callbacks: {
-                  afterTitle: function() {
-                    window.chartHoverTotal = 0;
-                  },
-                  label: function(tooltipItem) {
-                    const dataPoint = tooltipItem.dataset.label;
-                    let dataNote = "";
-                    const valor = tooltipItem.raw;
-                    if (tooltipItem.datasetIndex === 3) {
-                      window.chartHoverTotal -= Number.parseFloat(valor);
-                    } else if (tooltipItem.datasetIndex === 4) {
-                      window.chartHoverTotal -= Number.parseFloat(valor);
-                    } else {
-                      window.chartHoverTotal += Number.parseFloat(valor);
-                    }
-                    return `${dataPoint}${dataNote}: $${valor.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}`;
-                  },
-                  footer: function() {
-                    return `TOTAL: $${window.chartHoverTotal.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}`;
-                  }
-                }
-              }
-            }
-          }
-        });
-      }
-
-      document.getElementById('HSA').addEventListener('change', function() {
-        chartFilter.HSA = this.checked;
-        applyChartFilter();
-      });
-
-      document.getElementById('OON_Availaible').addEventListener('change', function() {
-        chartFilter.OON_Availaible = this.checked;
-        applyChartFilter();
-      });
-
-      applyChartFilter();
-    });
+    // No additional JS is needed for the current layout,
+    // but this is a placeholder for future enhancements.
   </script>
 </body>
 </html>
