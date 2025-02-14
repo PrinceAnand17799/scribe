@@ -1,101 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Responsive Landing Page</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* Reset & Base Styles */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-    body, html {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<div class="coverageTable">
+                            <h5 class="annualCostOfCoverageText">
+                                Monthly cost of coverage
+                            </h5>
+                            <table class="table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" colspan="4">Medical</th>
+                                    </tr>
+                                    <tr class="header-green">
+                                        <th scope="col">Coverage Category</th>
+                                        <th class="text-center" scope="col">Gold Plan</th>
+                                        <th class="text-center" scope="col">Silver Plan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="medicalCoverageTable">
+                                </tbody>
+                            </table>
+                            <!-- <small id="rateDescription">Rates above are for full-time employees</small> -->
+                        </div>
 
-    /* Header Styles */
-    header {
-      padding: 20px;
-    }
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    hr {
-      margin: 0;
-      border: none;
-      border-top: 1px solid #ccc;
-    }
 
-    /* Main Section Styles */
-    .main-section {
-      display: flex;
-      flex-wrap: wrap;
-      /* min-height: calc(100vh - 62px); Adjusted for header and divider height */
-    }
-    .image-container,
-    .text-container {
-      flex: 1 1 50%;
-    }
-    .image-container {
-      padding: 20px;
-    }
-    .image-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .text-container {
-      display: flex;
-      justify-content: center;  /* Horizontally center if needed */
-      align-items: center;      /* Vertically center the text */
-      padding: 20px;
-    }
-    .text-content p {
-      margin: 10px 0;
-      font-size: 18px;
-      /* Text size is independent of the image */
-    }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .image-container,
-      .text-container {
-        flex: 1 1 100%;
-      }
-      .main-section {
-        min-height: auto; /* Let content determine height on smaller screens */
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="logo">Your Logo</div>
-  </header>
-  <hr>
-  <section class="main-section">
-    <!-- Left Side: Image -->
-    <div class="image-container">
-      <img src="https://cdn.pixabay.com/photo/2019/05/16/20/15/online-4208112_1280.jpg" alt="Placeholder Image">
-    </div>
-    <!-- Right Side: Text -->
-    <div class="text-container">
-      <div class="text-content">
-        <p>First line of text Lorem ipsum dolor sit amet, consectetur adipisicing elit. Hic voluptatum, beatae ullam, ratione quas unde nobis vitae totam voluptatibus consequuntur repellendus harum! Repellendus velit, sit quidem est temporibus nam ipsam?</p>
-        <p>Second line of text</p>
-        <p>Third line of text</p>
-        <p>Fourth line of text</p>
-      </div>
-    </div>
-  </section>
+JS
 
-  <!-- Optional JavaScript -->
-  <script>
-    // No additional JS is needed for the current layout,
-    // but this is a placeholder for future enhancements.
-  </script>
-</body>
-</html>
+var medical = "<tr><th>" + apiOutputs.output_medical[2][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[2][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[2][2])}` + "</td>";
+
+medical += "<tr><th>" + apiOutputs.output_medical[3][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[3][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[3][2])}` + "</td>";
+
+medical += "<tr><th>" + apiOutputs.output_medical[4][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[4][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[4][2])}` + "</td>";
+
+medical += "<tr><th>" + apiOutputs.output_medical[5][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[5][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[5][2])}` + "</td>";
+
+
+CSS
+
+
+.table {
+    font-size: .5rem;
+    border: none !important;
+}
+
+.table.simplifiedCopayment {
+    font-size: .5rem;
+}   
+
+.table tr {
+    border-bottom: #000 solid 1px;
+}
+
+.table td {
+    text-align: center;
+    /* border-bottom: #000 solid 1px; */
+}
+
+.header-green {
+    background: #00B097;
+    opacity: 1;
+    color: #fff;
+}
+
+.tableSubSection {
+    background-color: #efe9c6 !important;
+    color: #00477b;
+    font-weight: bold;
+    text-align: left !important;
+}
+
+.firstRow {
+    /* width: 25%; */
+    /* padding-right: 20px; */
+    background: #FFEBBF !important;
+    opacity: 1;
+}
+
+.secondRow {
+    background: #F0E8FA !important;
+    opacity: 1;
+}
