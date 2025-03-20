@@ -1,79 +1,103 @@
-<div class="coverageTable">
-                            <h5 class="annualCostOfCoverageText">
-                                Monthly cost of coverage
-                            </h5>
-                            <table class="table" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" colspan="4">Medical</th>
-                                    </tr>
-                                    <tr class="header-green">
-                                        <th scope="col">Coverage Category</th>
-                                        <th class="text-center" scope="col">Gold Plan</th>
-                                        <th class="text-center" scope="col">Silver Plan</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="medicalCoverageTable">
-                                </tbody>
-                            </table>
-                            <!-- <small id="rateDescription">Rates above are for full-time employees</small> -->
-                        </div>
+<!-- Parent Website (parent.html) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Website</title>
+    <script>
+        function sendActivity(eventType, details) {
+            const iframe = document.getElementById('childFrame');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ eventType, details }, '*');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Capture all click events on elements with an ID
+            document.body.addEventListener('click', (event) => {
+                if (event.target.id) {
+                    sendActivity('Click', `Element: ${event.target.tagName} | ID: ${event.target.id}`);
+                }
+            });
+
+            // Capture input changes on elements with an ID
+            document.body.addEventListener('input', (event) => {
+                if (event.target.id) {
+                    sendActivity('Input Change', `Element: ${event.target.tagName} | ID: ${event.target.id} | Value: ${event.target.value}`);
+                }
+            });
+
+            // Capture mouse movement (Optional for analytics, can be commented out if not needed)
+            // document.body.addEventListener('mousemove', (event) => {
+            //     sendActivity('Mouse Move', `Coordinates: X=${event.clientX}, Y=${event.clientY}`);
+            // });
+
+            // Capture scrolling
+            document.body.addEventListener('scroll', () => {
+                sendActivity('Scroll', 'User scrolled the page');
+            }, { passive: true });
+        });
+    </script>
+</head>
+<body>
+    <h1>Parent Website (Fully Functional)</h1>
+    <p>Try clicking, typing, or scrolling and see the iframe update.</p>
+    <button id="btn1">Click Me</button>
+    <input type="text" id="input1" placeholder="Type something...">
+    <input type="checkbox" id="checkbox1"> Checkbox Example
+    <input type="radio" name="radioGroup" id="radio1"> Radio 1
+    <input type="radio" name="radioGroup" id="radio2"> Radio 2
+    <a href="#" id="link1">Example Link</a>
+    <img src="example.jpg" id="image1" alt="Sample Image" width="100">
+    <!-- <div style="height: 1000px; background: lightgray;">Scroll here...</div> -->
+    <h2>Iframe (Child App Tracking User Activities)</h2>
+    <iframe id="childFrame" src="child.html" width="100%" height="300"></iframe>
+</body>
+</html>
 
 
 
-JS
-
-var medical = "<tr><th>" + apiOutputs.output_medical[2][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[2][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[2][2])}` + "</td>";
-
-medical += "<tr><th>" + apiOutputs.output_medical[3][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[3][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[3][2])}` + "</td>";
-
-medical += "<tr><th>" + apiOutputs.output_medical[4][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[4][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[4][2])}` + "</td>";
-
-medical += "<tr><th>" + apiOutputs.output_medical[5][0] + "</th><td class='firstRow'>" + `$${formatMoney(apiOutputs.output_medical[5][1])}` + "</td><td class='secondRow'>" + `$${formatMoney(apiOutputs.output_medical[5][2])}` + "</td>";
 
 
-CSS
 
 
-.table {
-    font-size: .5rem;
-    border: none !important;
-}
+<!-- Child Tracking Page (child.html) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Tracker</title>
+    <script>
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.eventType) {
+                const output = document.getElementById('output');
+                const newEvent = document.createElement('p');
+                newEvent.textContent = `${event.data.eventType}: ${event.data.details}`;
+                output.appendChild(newEvent);
 
-.table.simplifiedCopayment {
-    font-size: .5rem;
-}   
+                // Ensure logs persist and do not get deleted
+                localStorage.setItem('activityLog', output.innerHTML);
 
-.table tr {
-    border-bottom: #000 solid 1px;
-}
-
-.table td {
-    text-align: center;
-    /* border-bottom: #000 solid 1px; */
-}
-
-.header-green {
-    background: #00B097;
-    opacity: 1;
-    color: #fff;
-}
-
-.tableSubSection {
-    background-color: #efe9c6 !important;
-    color: #00477b;
-    font-weight: bold;
-    text-align: left !important;
-}
-
-.firstRow {
-    /* width: 25%; */
-    /* padding-right: 20px; */
-    background: #FFEBBF !important;
-    opacity: 1;
-}
-
-.secondRow {
-    background: #F0E8FA !important;
-    opacity: 1;
-}
+                // Auto-scroll to the latest event
+                output.scrollTop = output.scrollHeight;
+            }
+        });
+        
+        // Restore previous logs from localStorage on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLogs = localStorage.getItem('activityLog');
+            if (savedLogs) {
+                document.getElementById('output').innerHTML = savedLogs;
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Activity Log</h1>
+    <div id="output" style="border: 1px solid #000; padding: 10px; height: 300px; overflow-y: auto;">
+        <p>Waiting for user interactions...</p>
+    </div>
+</body>
+</html>
