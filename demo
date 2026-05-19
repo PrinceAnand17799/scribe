@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Onboarding</title>
-    
-    <!-- Bootstrap 5 for layout utilities -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -21,25 +19,9 @@
     <!-- Main Workspace -->
     <main class="app-wrapper position-relative bg-light d-flex flex-column">
         
-        <!-- Progress Bar (Left aligned, hidden on Welcome screen) -->
-        <div id="progress-container" class="container-fluid px-4 mt-4 z-3 transition-opacity opacity-0">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-5">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="text-muted fw-bold">Setup Progress</small>
-                        <small id="progress-text" class="text-dark fw-bold">0%</small>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div id="app-progress" class="progress-bar bg-dark transition-width" role="progressbar" style="width: 0%;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BACKGROUND ANIMATIONS -->
-
-        <!-- 1. The persistent circular lines (Scaled down to 300x300) -->
-        <div class="bottom-right-arcs z-1">
+        <!-- BACKGROUND ANIMATIONS (Z-Index 1) -->
+        <!-- The SVG container we will clone in JS to force re-animation -->
+        <div id="spiral-container" class="bottom-right-arcs z-1">
             <svg viewBox="0 0 500 500" class="w-100 h-100">
                 <path d="M 20 500 A 480 480 0 0 1 500 20" class="draw-arc arc-1" pathLength="100" />
                 <path d="M 100 500 A 400 400 0 0 1 500 100" class="draw-arc arc-2" pathLength="100" />
@@ -48,105 +30,108 @@
             </svg>
         </div>
 
-        <!-- 2. Hero Elements (Only visible on Welcome Screen) -->
         <div id="hero-animations" class="shape-container z-1">
             <div class="shape half-donut"></div>
             <div class="shape quarter-circle"></div>
-            
-            <!-- Wide, short elderly couple image -->
             <img src="https://images.unsplash.com/photo-1538356111053-748a48e1acb8?auto=format&fit=crop&w=800&h=250&q=80" alt="Elderly Couple" class="hero-image shadow-lg">
         </div>
 
-        <!-- INTERACTIVE PANELS -->
-        <div class="container-fluid px-4 flex-grow-1 d-flex flex-column z-2 mt-4">
+        <!-- INTERACTIVE CONTENT AREA (Z-Index 2) -->
+        <div class="container-fluid flex-grow-1 d-flex flex-column justify-content-center z-2 content-offset">
             
-            <!-- Panel 0: Welcome 
-                 'welcome-content' class guarantees it sits right next to the donut with spacing -->
-            <section id="panel-welcome" class="panel row mt-5">
-                <div class="col-12 col-md-8 col-lg-6 welcome-content">
-                    <h1 class="display-4 fw-bold mb-3">Welcome to the Platform</h1>
-                    <p class="lead text-muted mb-4">Let's configure your ideal workspace. This simple process takes less than a minute.</p>
-                    <button class="btn btn-dark btn-lg px-5 shadow-sm" onclick="goToNextStep()">Start Setup</button>
-                </div>
-            </section>
-
-            <!-- Question Panels -->
-            
-            <!-- Panel 1: Buttons -->
-            <section id="panel-q1" class="panel d-none row">
-                <div class="col-12 col-md-6 col-lg-5">
-                    <h3 class="mb-4">What is your primary goal?</h3>
-                    <div class="d-grid gap-3">
-                        <button class="btn btn-outline-dark text-start py-3 px-4 fw-bold" onclick="goToNextStep()">Performance Tuning</button>
-                        <button class="btn btn-outline-dark text-start py-3 px-4 fw-bold" onclick="goToNextStep()">Conversion Growth</button>
+            <div class="row w-100">
+                <div class="col-12 col-md-10 col-lg-6 col-xl-5">
+                    
+                    <!-- Progress Bar -->
+                    <div id="progress-container" class="transition-opacity opacity-0 mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted fw-bold">Setup Progress</small>
+                            <small id="progress-text" class="text-dark fw-bold">0%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div id="app-progress" class="progress-bar bg-dark transition-width" role="progressbar" style="width: 0%;"></div>
+                        </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- Panel 2: Text Input -->
-            <section id="panel-q2" class="panel d-none row">
-                <div class="col-12 col-md-6 col-lg-5">
-                    <h3 class="mb-4">Name your workspace</h3>
-                    <div class="mb-4">
-                        <label for="workspaceName" class="form-label text-muted">Workspace or Project Name</label>
-                        <input type="text" class="form-control form-control-lg" id="workspaceName" placeholder="e.g., Alpha Project">
-                    </div>
-                    <button class="btn btn-dark py-3 px-5" onclick="goToNextStep()">Continue</button>
-                </div>
-            </section>
+                    <!-- PANELS CONTAINER -->
+                    
+                    <!-- Panel 0: Welcome (Added 'welcome-shift' to push it higher up) -->
+                    <section class="step-panel panel welcome-shift">
+                        <h1 class="display-4 fw-bold mb-3">Welcome to the Platform</h1>
+                        <p class="lead text-muted mb-4">Let's configure your ideal workspace. This simple process takes less than a minute.</p>
+                        <button class="btn btn-dark btn-lg px-5 shadow-sm" onclick="goNext()">Start Setup</button>
+                    </section>
 
-            <!-- Panel 3: Dropdown -->
-            <section id="panel-q3" class="panel d-none row">
-                <div class="col-12 col-md-6 col-lg-5">
-                    <h3 class="mb-4">Select your industry</h3>
-                    <div class="mb-4">
-                        <select class="form-select form-select-lg" aria-label="Industry Select">
-                            <option selected disabled>Choose an option...</option>
-                            <option value="1">Technology & Software</option>
-                            <option value="2">E-Commerce & Retail</option>
-                            <option value="3">Healthcare & Medical</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-dark py-3 px-5" onclick="goToNextStep()">Continue</button>
-                </div>
-            </section>
+                    <!-- Panel 1 -->
+                    <section class="step-panel panel d-none">
+                        <h3 class="mb-4">What is your primary goal?</h3>
+                        <div class="d-grid gap-3 mb-4">
+                            <button class="btn btn-outline-dark text-start py-3 px-4 fw-bold" onclick="goNext()">Performance Tuning</button>
+                            <button class="btn btn-outline-dark text-start py-3 px-4 fw-bold" onclick="goNext()">Conversion Growth</button>
+                        </div>
+                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
+                    </section>
 
-            <!-- Panel 4: Slider -->
-            <section id="panel-q4" class="panel d-none row">
-                <div class="col-12 col-md-6 col-lg-5">
-                    <h3 class="mb-4">Estimated project timeline</h3>
-                    <div class="mb-4">
-                        <label for="timelineRange" class="form-label text-muted">Months: <span id="rangeVal" class="fw-bold text-dark">6</span></label>
-                        <input type="range" class="form-range" min="1" max="12" step="1" value="6" id="timelineRange" oninput="document.getElementById('rangeVal').innerText = this.value">
-                    </div>
-                    <button class="btn btn-dark py-3 px-5" onclick="goToNextStep()">See Results</button>
-                </div>
-            </section>
+                    <!-- Panel 2 -->
+                    <section class="step-panel panel d-none">
+                        <h3 class="mb-4">Name your workspace</h3>
+                        <div class="mb-4">
+                            <label for="workspaceName" class="form-label text-muted">Workspace or Project Name</label>
+                            <input type="text" class="form-control form-control-lg" id="workspaceName" placeholder="e.g., Alpha Project">
+                        </div>
+                        <button class="btn btn-dark py-3 px-5 me-3" onclick="goNext()">Continue</button>
+                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
+                    </section>
 
-            <!-- Panel 5: Results -->
-            <section id="panel-results" class="panel d-none row">
-                <div class="col-12 col-md-6 col-lg-5">
-                    <h1 class="display-5 fw-bold text-success mb-3">Setup Complete!</h1>
-                    <p class="lead text-muted mb-5">Your customized environment is ready to go based on your inputs.</p>
-                    <button class="btn btn-outline-dark px-5 py-2 shadow-sm" onclick="resetApp()">Start Over</button>
-                </div>
-            </section>
+                    <!-- Panel 3 -->
+                    <section class="step-panel panel d-none">
+                        <h3 class="mb-4">Select your industry</h3>
+                        <div class="mb-4">
+                            <select class="form-select form-select-lg" aria-label="Industry Select">
+                                <option selected disabled>Choose an option...</option>
+                                <option value="1">Technology & Software</option>
+                                <option value="2">E-Commerce & Retail</option>
+                                <option value="3">Healthcare & Medical</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-dark py-3 px-5 me-3" onclick="goNext()">Continue</button>
+                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
+                    </section>
 
+                    <!-- Panel 4 -->
+                    <section class="step-panel panel d-none">
+                        <h3 class="mb-4">Estimated project timeline</h3>
+                        <div class="mb-4">
+                            <label for="timelineRange" class="form-label text-muted">Months: <span id="rangeVal" class="fw-bold text-dark">6</span></label>
+                            <input type="range" class="form-range" min="1" max="12" step="1" value="6" id="timelineRange" oninput="document.getElementById('rangeVal').innerText = this.value">
+                        </div>
+                        <button class="btn btn-dark py-3 px-5 me-3" onclick="goNext()">See Results</button>
+                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
+                    </section>
+
+                    <!-- Panel 5: Results -->
+                    <section class="step-panel panel d-none">
+                        <h1 class="display-5 fw-bold text-success mb-3">Setup Complete!</h1>
+                        <p class="lead text-muted mb-5">Your customized environment is ready to go based on your inputs.</p>
+                        <button class="btn btn-outline-dark px-5 py-2 me-3 shadow-sm" onclick="routeToPanel(0)">Start Over</button>
+                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
+                    </section>
+
+                </div>
+            </div>
         </div>
     </main>
 
     <!-- Persistent Footer -->
     <footer class="bg-dark text-white py-3 position-relative z-3 mt-auto">
         <div class="container-fluid px-4">
-            <small>&copy; 2026 BrandLogo. Built with clear code.</small>
+            <small>&copy; 2026 BrandLogo. Built with scalable architecture.</small>
         </div>
     </footer>
 
     <script src="app.js"></script>
 </body>
 </html>
-
-
 
 
 
@@ -164,21 +149,33 @@ body {
   overflow: hidden; 
 }
 
-/* --- Utilities --- */
+/* Base left-spacing */
+.content-offset {
+  padding-left: 220px;
+}
+
+/* 
+* This new class shifts ONLY the welcome text UP vertically.
+* By pushing it up 12vh, it avoids the widest part of the donut perfectly.
+*/
+.welcome-shift {
+  transform: translateY(-12vh);
+}
+
+/* Utilities */
 .transition-width { transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
 .transition-opacity { transition: opacity 0.4s ease; }
 .opacity-0 { opacity: 0; pointer-events: none; }
 
-/* Panel Animation */
 .panel {
-  animation: slideUpFade 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: slideUpFade 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @keyframes slideUpFade {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(15px) translateX(0); }
+  /* We ensure translate uses base formatting so it doesn't conflict with .welcome-shift */
+  to { opacity: 1; }
 }
-
 
 /* --- HERO ANIMATIONS (Welcome Page) --- */
 .shape-container {
@@ -188,7 +185,7 @@ body {
   transition: opacity 0.5s ease;
 }
 
-/* Half Donut (Protrudes exactly 200px into the screen) */
+/* Donut perfectly aligned to vertical center */
 .half-donut {
   position: absolute;
   width: 400px;
@@ -201,16 +198,13 @@ body {
 }
 
 @keyframes dropPerpendicular {
-  to { top: 40%; transform: translateY(-50%); }
+  to { 
+      top: 50%; /* Exact center of the screen */
+      transform: translateY(-50%); /* Pulls it up by half its own height */
+  }
 }
 
-/* Welcome Content Spacing */
-.welcome-content {
-  /* 200px to clear the donut + 40px padding for breathing room */
-  padding-left: 240px; 
-}
-
-/* Quarter Circle (Top Right) */
+/* Quarter Circle - Much slower, smoother fade in */
 .quarter-circle {
   position: absolute;
   width: 150px;
@@ -220,15 +214,16 @@ body {
   top: 0;
   right: 0;
   opacity: 0;
-  animation: fadeInQuarter 1s ease-out forwards;
-  animation-delay: 0.6s;
+  
+  /* Changed from 1s to 2.5s for a longer fade */
+  animation: fadeInQuarter 2.5s ease-in-out forwards;
+  animation-delay: 0.4s;
 }
 
 @keyframes fadeInQuarter {
   to { opacity: 1; }
 }
 
-/* Wider, Shorter Hero Image */
 .hero-image {
   position: absolute;
   bottom: 0; 
@@ -247,33 +242,28 @@ body {
   to { transform: translateX(-50%) translateY(0); opacity: 1; }
 }
 
-
-/* --- DRAWING ARCS (Bottom Right Spiral) --- */
+/* --- BOTTOM RIGHT SPIRAL LOADER --- */
 .bottom-right-arcs {
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 300px; /* Reduced to match previous spiral size */
+  width: 300px; 
   height: 300px;
   pointer-events: none;
 }
 
-/* SVG Line Styles */
 .draw-arc {
   fill: none;
   stroke: #000;
-  stroke-width: 4; /* Slightly thicker stroke since the container is smaller */
+  stroke-width: 4; 
   stroke-linecap: round;
-  
-  /* Pushes line entirely out of view */
   stroke-dasharray: 100;
   stroke-dashoffset: 100; 
-  
-  /* Smooth, uniform loader easing */
+  /* The animation is now hardcoded here. 
+     JS will clone the container to replay it */
   animation: drawPath 1.2s ease-in-out forwards;
 }
 
-/* Tighter delays for a coordinated "loading wave" effect */
 .arc-1 { animation-delay: 0s; }
 .arc-2 { animation-delay: 0.15s; }
 .arc-3 { animation-delay: 0.3s; }
@@ -283,13 +273,17 @@ body {
   to { stroke-dashoffset: 0; }
 }
 
-/* Mobile Adjustments */
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .content-offset { padding-left: 150px; }
+  .half-donut { width: 300px; height: 300px; border-width: 50px; left: -150px; }
+  .hero-image { left: 50%; }
+}
+
 @media (max-width: 768px) {
-  .half-donut { width: 250px; height: 250px; border-width: 40px; left: -125px; }
-  
-  /* Mobile donut protrudes 125px, leave 25px gap */
-  .welcome-content { padding-left: 150px; }
-  
+  .content-offset { padding-left: 20px; }
+  .half-donut { opacity: 0.1; } 
+  .welcome-shift { transform: translateY(-5vh); } /* Less shift on mobile */
   .hero-image { width: 320px; height: 120px; left: 50%; }
   .bottom-right-arcs { width: 200px; height: 200px; }
 }
@@ -297,108 +291,108 @@ body {
 
 
 
-
-
 /**
  * APP STATE VARIABLES
  */
-let currentStep = 0;           
-const totalQuestions = 4;      
+let currentIndex = 0;
+const panels = document.querySelectorAll('.step-panel');
+const totalQuestions = panels.length - 2; 
 
 /**
- * Moves the user forward by 1 step
+ * NAVIGATION LOGIC
  */
-function goToNextStep() {
-    currentStep++; 
-    updateUI();                    
+function goNext() {
+    if (currentIndex < panels.length - 1) {
+        routeToPanel(currentIndex + 1);
+    }
+}
+
+function goBack() {
+    if (currentIndex > 0) {
+        routeToPanel(currentIndex - 1);
+    }
 }
 
 /**
- * Resets back to the Welcome screen
+ * THE ROUTER 
  */
-function resetApp() {
-    currentStep = 0;
-    updateUI();
-}
+function routeToPanel(targetIndex) {
+    currentIndex = targetIndex;
 
-/**
- * CORE LOGIC (The Router)
- */
-function updateUI() {
-    
-    // 1. Hide ALL panels to reset the view
-    const allPanels = document.querySelectorAll('.panel');
-    allPanels.forEach(panel => {
-        panel.classList.add('d-none');
+    // 1. Show the correct panel, hide the rest
+    panels.forEach((panel, index) => {
+        if (index === currentIndex) {
+            panel.classList.remove('d-none');
+        } else {
+            panel.classList.add('d-none');
+        }
     });
 
-    // 2. DOM Elements to manipulate
-    const progressContainer = document.getElementById('progress-container');
-    const progressBar = document.getElementById('app-progress');
-    const progressText = document.getElementById('progress-text');
-    const heroAnimations = document.getElementById('hero-animations');
+    // 2. Determine state flags
+    const isWelcomeScreen = (currentIndex === 0);
+    const isResultsScreen = (currentIndex === panels.length - 1);
 
-    // 3. Routing Logic
-    if (currentStep === 0) {
-        
-        // --- WELCOME SCREEN ---
-        document.getElementById('panel-welcome').classList.remove('d-none');
-        
-        progressContainer.classList.add('opacity-0'); 
-        progressBar.style.width = '0%';               
-        heroAnimations.style.opacity = '1';           
-        
-    } else if (currentStep >= 1 && currentStep <= totalQuestions) {
-        
-        // --- QUESTIONNAIRE SCREENS ---
-        document.getElementById('panel-q' + currentStep).classList.remove('d-none');
-        
-        progressContainer.classList.remove('opacity-0'); 
-        heroAnimations.style.opacity = '0';              
-        
-        // Math (e.g., Step 2 out of 4 = 50%)
-        const percentage = (currentStep / totalQuestions) * 100;
-        
-        progressBar.style.width = percentage + '%';
-        progressText.innerText = Math.round(percentage) + '%';
-        
-    } else {
-        
-        // --- RESULTS SCREEN ---
-        document.getElementById('panel-results').classList.remove('d-none');
-        
-        progressContainer.classList.remove('opacity-0');
-        heroAnimations.style.opacity = '0';
-        
-        progressBar.style.width = '100%';
-        progressText.innerText = '100%';
-    }
-
-    // 4. Re-trigger the bottom-right spiral animation
+    // 3. Delegate to specific update functions
+    updateHeroImages(isWelcomeScreen);
+    updateProgressBar(currentIndex, isWelcomeScreen, isResultsScreen);
     reanimateSpiral();
 }
 
 /**
- * ANIMATION RESET TRICK
- * Forces the browser to replay the CSS drawing animation on the SVG lines.
+ * PROGRESS BAR LOGIC 
  */
-function reanimateSpiral() {
-    // Grab all 4 SVG paths
-    const arcs = document.querySelectorAll('.draw-arc');
-    
-    arcs.forEach(arc => {
-        // Step A: Strip the animation away
-        arc.style.animation = 'none';
+function updateProgressBar(index, isWelcome, isResult) {
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('app-progress');
+    const progressText = document.getElementById('progress-text');
+
+    if (isWelcome) {
+        progressContainer.classList.add('opacity-0');
+        progressBar.style.width = '0%';
+        progressText.innerText = '0%';
+    } else {
+        progressContainer.classList.remove('opacity-0');
+        let percentage = 0;
         
-        // Step B: Ask for the element's width. 
-        // The browser *has* to recalculate the screen to give us this number.
-        // This is called forcing a "DOM Reflow".
-        void arc.offsetWidth; 
-        
-        // Step C: Give the animation back. The browser treats it as brand new and plays it.
-        arc.style.animation = null; 
-    });
+        if (isResult) {
+            percentage = 100;
+        } else {
+            percentage = (index / totalQuestions) * 100;
+        }
+
+        progressBar.style.width = `${percentage}%`;
+        progressText.innerText = `${Math.round(percentage)}%`;
+    }
 }
 
-// Ensure the UI aligns with state on page load
-updateUI();
+/**
+ * IMAGE VISIBILITY LOGIC 
+ */
+function updateHeroImages(isWelcome) {
+    const heroAnimations = document.getElementById('hero-animations');
+    if (isWelcome) {
+        heroAnimations.style.opacity = '1';
+    } else {
+        heroAnimations.style.opacity = '0';
+    }
+}
+
+/**
+ * SPIRAL ANIMATION TRIGGER (Bulletproof Method)
+ * By cloning the HTML element and replacing the old one, we trick the browser 
+ * into thinking it is a brand new element, guaranteeing the CSS animation replays.
+ */
+function reanimateSpiral() {
+    const container = document.getElementById('spiral-container');
+    
+    // Check if container exists to prevent errors
+    if (container) {
+        // Clone the entire SVG container
+        const clone = container.cloneNode(true);
+        // Replace the old one in the DOM with the fresh clone
+        container.parentNode.replaceChild(clone, container);
+    }
+}
+
+// Initialize the application on page load
+routeToPanel(0);
