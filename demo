@@ -3,132 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Onboarding</title>
+    <title>Healthcare Cost Estimator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Persistent Header -->
-    <header class="navbar bg-white shadow-sm border-bottom position-relative z-3">
+    <header class="app-header navbar bg-white shadow-sm border-bottom py-3">
         <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold text-dark" href="#">BrandLogo</a>
+            <a class="navbar-brand fw-bold text-dark fs-4" href="#">BrandLogo</a>
         </div>
     </header>
 
-    <!-- Main Workspace -->
     <main class="app-wrapper position-relative bg-light d-flex flex-column">
         
-        <!-- BACKGROUND ANIMATIONS (Z-Index 1) -->
-        <!-- The SVG container we will clone in JS to force re-animation -->
+        <div id="hero-animations" class="shape-container z-1">
+            <div class="welcome-blue-gradient"></div>
+            <div class="half-donut-fixed welcome-donut"></div>
+            <img src="https://images.unsplash.com/photo-1538356111053-748a48e1acb8?auto=format&fit=crop&w=800&h=250&q=80" id="welcome-footer-img" alt="Footer" class="hero-image shadow-lg">
+        </div>
+
         <div id="spiral-container" class="bottom-right-arcs z-1">
             <svg viewBox="0 0 500 500" class="w-100 h-100">
-                <path d="M 20 500 A 480 480 0 0 1 500 20" class="draw-arc arc-1" pathLength="100" />
-                <path d="M 100 500 A 400 400 0 0 1 500 100" class="draw-arc arc-2" pathLength="100" />
-                <path d="M 180 500 A 320 320 0 0 1 500 180" class="draw-arc arc-3" pathLength="100" />
-                <path d="M 260 500 A 240 240 0 0 1 500 260" class="draw-arc arc-4" pathLength="100" />
+                <path d="M 20 500 A 480 480 0 0 1 500 20" class="draw-arc" pathLength="100" />
+                <path d="M 80 500 A 420 420 0 0 1 500 80" class="draw-arc" pathLength="100" />
+                <path d="M 140 500 A 360 360 0 0 1 500 140" class="draw-arc" pathLength="100" />
+                <path d="M 200 500 A 300 300 0 0 1 500 200" class="draw-arc" pathLength="100" />
+                <path d="M 260 500 A 240 240 0 0 1 500 260" class="draw-arc" pathLength="100" />
             </svg>
         </div>
 
-        <div id="hero-animations" class="shape-container z-1">
-            <div class="shape half-donut"></div>
-            <div class="shape quarter-circle"></div>
-            <img src="https://images.unsplash.com/photo-1538356111053-748a48e1acb8?auto=format&fit=crop&w=800&h=250&q=80" alt="Elderly Couple" class="hero-image shadow-lg">
-        </div>
-
-        <!-- INTERACTIVE CONTENT AREA (Z-Index 2) -->
-        <div class="container-fluid flex-grow-1 d-flex flex-column justify-content-center z-2 content-offset">
+        <div class="flex-grow-1 position-relative z-2">
             
-            <div class="row w-100">
-                <div class="col-12 col-md-10 col-lg-6 col-xl-5">
-                    
-                    <!-- Progress Bar -->
-                    <div id="progress-container" class="transition-opacity opacity-0 mb-4">
-                        <div class="d-flex justify-content-between mb-1">
-                            <small class="text-muted fw-bold">Setup Progress</small>
-                            <small id="progress-text" class="text-dark fw-bold">0%</small>
-                        </div>
-                        <div class="progress" style="height: 8px;">
-                            <div id="app-progress" class="progress-bar bg-dark transition-width" role="progressbar" style="width: 0%;"></div>
-                        </div>
+            <div id="onboarding-flow-container" class="content-offset pt-5">
+                
+                <div id="progress-container" class="transition-opacity opacity-0 mb-5 custom-progress-width">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span id="progress-text" class="text-dark fw-bold fs-6">0 out of 12 questions answered</span>
                     </div>
-
-                    <!-- PANELS CONTAINER -->
+                    <div class="progress" style="height: 14px; border-radius: 8px;">
+                        <div id="app-progress" class="progress-bar custom-theme-bar transition-width" role="progressbar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                
+                <section class="step-panel panel welcome-layout">
+                    <h1 class="display-4 fw-bold mb-3 text-dark">Plan today. Retire with more confidence</h1>
+                    <p class="text-muted mb-4 fs-4" style="line-height: 1.6; max-width: 900px;">Learn how informed health care choices can enhance your retirement security. By answering a few questions, we can provide a personalized estimate of your health care cost after age 65.</p>
+                    <div class="welcome-btn-wrapper">
+                        <button class="btn btn-action-next btn-lg fs-5 shadow-sm fw-bold" onclick="appLogic.handleNext()">Start Setup</button>
+                    </div>
+                </section>
+                
+                <div class="shared-alignment">
                     
-                    <!-- Panel 0: Welcome (Added 'welcome-shift' to push it higher up) -->
-                    <section class="step-panel panel welcome-shift">
-                        <h1 class="display-4 fw-bold mb-3">Welcome to the Platform</h1>
-                        <p class="lead text-muted mb-4">Let's configure your ideal workspace. This simple process takes less than a minute.</p>
-                        <button class="btn btn-dark btn-lg px-5 shadow-sm" onclick="goNext()">Start Setup</button>
-                    </section>
-
-                    <!-- Panel 1 -->
                     <section class="step-panel panel d-none">
-                        <h3 class="mb-4">What is your primary goal?</h3>
-                        <div class="d-grid gap-3 mb-4">
-                            <button class="btn btn-outline-dark text-start py-3 px-4 fw-bold" onclick="goNext()">Performance Tuning</button>
-                            <button class="btn btn-outline-dark text-start py-3 px-4 fw-bold" onclick="goNext()">Conversion Growth</button>
+                        <div class="question-block mb-4">
+                            <h3 class="fw-bold text-dark mb-4">Q1. What is your current age?</h3>
+                            <p class="text-muted mb-4 fs-6">We'll take into consideration expected increases in health care costs between now and when you retire.</p>
+                            <div class="d-flex align-items-center gap-3 mt-4 pt-2 position-relative">
+                                <input type="number" class="form-control custom-numeric-input fw-bold m-0" id="q1_age" name="q1_age" placeholder="55" min="18" max="100" style="width: 110px;" required>
+                                <p class="custom-label-text m-0">years old</p>
+                                <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid age (18-100).</div>
+                            </div>
                         </div>
-                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
-                    </section>
-
-                    <!-- Panel 2 -->
-                    <section class="step-panel panel d-none">
-                        <h3 class="mb-4">Name your workspace</h3>
-                        <div class="mb-4">
-                            <label for="workspaceName" class="form-label text-muted">Workspace or Project Name</label>
-                            <input type="text" class="form-control form-control-lg" id="workspaceName" placeholder="e.g., Alpha Project">
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
                         </div>
-                        <button class="btn btn-dark py-3 px-5 me-3" onclick="goNext()">Continue</button>
-                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
                     </section>
 
-                    <!-- Panel 3 -->
                     <section class="step-panel panel d-none">
-                        <h3 class="mb-4">Select your industry</h3>
-                        <div class="mb-4">
-                            <select class="form-select form-select-lg" aria-label="Industry Select">
-                                <option selected disabled>Choose an option...</option>
-                                <option value="1">Technology & Software</option>
-                                <option value="2">E-Commerce & Retail</option>
-                                <option value="3">Healthcare & Medical</option>
-                            </select>
+                        <div class="question-block mb-4">
+                            <h3 class="fw-bold text-dark mb-4">Q2. At what age do you expect to retire?</h3>
+                            <p class="text-muted mb-4 fs-6">This estimate begins at age 65, when most people become eligible for Medicare. Enter your age if you are already retired.</p>
+                            <div class="d-flex align-items-center gap-3 mt-4 pt-2 position-relative">
+                                <input type="number" class="form-control custom-numeric-input fw-bold m-0" id="q2_retire_age" name="q2_retire_age" placeholder="65" min="50" max="100" style="width: 110px;" required>
+                                <p class="custom-label-text m-0">years old</p>
+                                <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid age (50-100).</div>
+                            </div>
                         </div>
-                        <button class="btn btn-dark py-3 px-5 me-3" onclick="goNext()">Continue</button>
-                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
-                    </section>
-
-                    <!-- Panel 4 -->
-                    <section class="step-panel panel d-none">
-                        <h3 class="mb-4">Estimated project timeline</h3>
-                        <div class="mb-4">
-                            <label for="timelineRange" class="form-label text-muted">Months: <span id="rangeVal" class="fw-bold text-dark">6</span></label>
-                            <input type="range" class="form-range" min="1" max="12" step="1" value="6" id="timelineRange" oninput="document.getElementById('rangeVal').innerText = this.value">
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
                         </div>
-                        <button class="btn btn-dark py-3 px-5 me-3" onclick="goNext()">See Results</button>
-                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
                     </section>
 
-                    <!-- Panel 5: Results -->
                     <section class="step-panel panel d-none">
-                        <h1 class="display-5 fw-bold text-success mb-3">Setup Complete!</h1>
-                        <p class="lead text-muted mb-5">Your customized environment is ready to go based on your inputs.</p>
-                        <button class="btn btn-outline-dark px-5 py-2 me-3 shadow-sm" onclick="routeToPanel(0)">Start Over</button>
-                        <button class="btn btn-link text-muted px-0 text-decoration-none" onclick="goBack()">← Back</button>
+                        <div class="question-block mb-5">
+                            <h3 class="mb-4 fw-bold text-dark">Q3. What is your gender?</h3>
+                            <div class="form-check form-check-inline me-4">
+                                <input class="form-check-input" type="radio" name="q3_gender" id="genderMale" value="Male" required>
+                                <label class="form-check-label custom-radio-label" for="genderMale">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="q3_gender" id="genderFemale" value="Female" required>
+                                <label class="form-check-label custom-radio-label" for="genderFemale">Female</label>
+                            </div>
+                        </div>
+
+                        <div class="question-block mb-4">
+                            <h3 class="fw-bold text-dark mb-4">Q4. What ZIP code do you live in the most of the year?</h3>
+                            <div class="d-flex align-items-center gap-3 mt-4 pt-2 position-relative">
+                                <input type="text" pattern="\d{5}" class="form-control custom-numeric-input fw-bold m-0" id="q4_zip" name="q4_zip" placeholder="90210" minlength="5" maxlength="5" style="width: 140px;" required>
+                                <p class="custom-label-text m-0">5 Digit zip code</p>
+                                <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid 5-digit zip code.</div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                        </div>
+                    </section>
+
+                    <section class="step-panel panel d-none">
+                        <div class="question-block mb-4">
+                            <h3 class="mb-4 fw-bold text-dark">Q5. Overall, compared to others your age, how would you describe your health?</h3>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q5_health" id="healthExc" value="Excellent" required>
+                                    <label class="form-check-label custom-radio-label" for="healthExc">Excellent</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q5_health" id="healthVGood" value="Very Good">
+                                    <label class="form-check-label custom-radio-label" for="healthVGood">Very Good</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q5_health" id="healthGood" value="Good">
+                                    <label class="form-check-label custom-radio-label" for="healthGood">Good</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q5_health" id="healthFair" value="Fair">
+                                    <label class="form-check-label custom-radio-label" for="healthFair">Fair</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q5_health" id="healthPoor" value="Poor">
+                                    <label class="form-check-label custom-radio-label" for="healthPoor">Poor</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                        </div>
+                    </section>
+
+                    <section class="step-panel panel d-none">
+                        <h3 class="fw-bold text-dark mb-4">In the past 12 months</h3>
+                        <div class="question-block mb-5">
+                            <h3 class="mb-2 fw-bold text-dark">Q6. How many times have you visited your primary care doctor?</h3>
+                            <p class="text-muted mb-3 fs-6">Do not include routine or preventive visits, such as annual checkups.</p>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-1">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv0" value="0 visits" required>
+                                    <label class="form-check-label custom-radio-label" for="pv0">0 visits</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv13" value="1-3 visits">
+                                    <label class="form-check-label custom-radio-label" for="pv13">1-3 visits</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv4" value="4 or more visits">
+                                    <label class="form-check-label custom-radio-label" for="pv4">4 or more visits</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-block mb-4">
+                            <h3 class="mb-3 fw-bold text-dark">Q7. How many times have you visited a specialist?</h3>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-1">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv0" value="0 visits" required>
+                                    <label class="form-check-label custom-radio-label" for="sv0">0 visits</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv14" value="1-4 visits">
+                                    <label class="form-check-label custom-radio-label" for="sv14">1-4 visits</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv59" value="5-9 visits">
+                                    <label class="form-check-label custom-radio-label" for="sv59">5-9 visits</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv10" value="10 or more visits">
+                                    <label class="form-check-label custom-radio-label" for="sv10">10 or more visits</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                        </div>
+                    </section>
+
+                    <section class="step-panel panel d-none">
+                        <div class="question-block mb-4">
+                            <h3 class="mb-4 fw-bold text-dark">Q8. How many times have you been admitted to the hospital in the past 12 months?</h3>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q8_hospital" id="hosp0" value="0 times" required>
+                                    <label class="form-check-label custom-radio-label" for="hosp0">0 times</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q8_hospital" id="hosp1" value="1 time">
+                                    <label class="form-check-label custom-radio-label" for="hosp1">1 time</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q8_hospital" id="hosp2" value="2 or more times">
+                                    <label class="form-check-label custom-radio-label" for="hosp2">2 or more times</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                        </div>
+                    </section>
+
+                    <section class="step-panel panel d-none">
+                        <div class="question-block mb-5">
+                            <h3 class="mb-4 fw-bold text-dark">Q9. What is your annual cost of prescription medication, before your insurance pays?</h3>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx1" value="under $250" required>
+                                    <label class="form-check-label custom-radio-label" for="rx1">Under $250</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx2" value="$250 to $1,000">
+                                    <label class="form-check-label custom-radio-label" for="rx2">$250 to $1,000</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx3" value="$1,000 to $2,500">
+                                    <label class="form-check-label custom-radio-label" for="rx3">$1,000 to $2,500</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx4" value="2500 to 5000">
+                                    <label class="form-check-label custom-radio-label" for="rx4">$2,500 to $5,000</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx5" value="5000 or more">
+                                    <label class="form-check-label custom-radio-label" for="rx5">$5,000 or more</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx6" value="don't know">
+                                    <label class="form-check-label custom-radio-label" for="rx6">Don't know</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-block mb-4">
+                            <h3 class="mb-2 fw-bold text-dark">Q10. How many different prescription medications do you take on a regular basis?</h3>
+                            <p class="text-muted mb-3 fs-6">Do not include over-the-counter medications or prescriptions you don't take regularly.</p>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc0" value="0" required>
+                                    <label class="form-check-label custom-radio-label" for="rxc0">0</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc1" value="1-2">
+                                    <label class="form-check-label custom-radio-label" for="rxc1">1-2</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc3" value="3-4">
+                                    <label class="form-check-label custom-radio-label" for="rxc3">3-4</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc5" value="5-6">
+                                    <label class="form-check-label custom-radio-label" for="rxc5">5-6</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc7" value="7 or more">
+                                    <label class="form-check-label custom-radio-label" for="rxc7">7 or more</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                        </div>
+                    </section>
+
+                    <section class="step-panel panel d-none">
+                        <div class="question-block mb-4">
+                            <h3 class="mb-2 fw-bold text-dark">Q11. Do you have a family history of serious health conditions that could affect future medical costs?</h3>
+                            <p class="text-muted mb-3 fs-6">Examples include cancer, heart diseases, or neurological conditions.</p>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q11_history" id="histYes" value="Yes" required>
+                                    <label class="form-check-label custom-radio-label" for="histYes">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q11_history" id="histNo" value="No">
+                                    <label class="form-check-label custom-radio-label" for="histNo">No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                        </div>
+                    </section>
+
+                    <section class="step-panel panel d-none">
+                        <div class="question-block mb-4">
+                            <h3 class="mb-2 fw-bold text-dark">Q12. How many years of retirement would you like to plan for after age 65?</h3>
+                            <p class="text-muted mb-3 fs-6">For people similar to you, the average length of retirement after age 65 is about 20 years.</p>
+                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry5" value="5 years" required>
+                                    <label class="form-check-label custom-radio-label" for="ry5">5 years</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry10" value="10 years">
+                                    <label class="form-check-label custom-radio-label" for="ry10">10 years</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry15" value="15 years">
+                                    <label class="form-check-label custom-radio-label" for="ry15">15 years</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry20" value="20 years">
+                                    <label class="form-check-label custom-radio-label" for="ry20">20 years</label>
+                                </div>
+                                <div class="form-check form-check-inline m-0">
+                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry25" value="25+ years">
+                                    <label class="form-check-label custom-radio-label" for="ry25">25+ years</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
+                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                            <button class="btn btn-action-next fw-bold text-nowrap validation-next-btn" style="width: auto !important; min-width: 220px !important; padding-left: 20px; padding-right: 20px;" onclick="appLogic.handleNext()" disabled>Show me my Estimate</button>
+                        </div>
                     </section>
 
                 </div>
             </div>
+
+            <section id="results-flow-container" class="step-panel panel d-none results-layout-canvas pt-5">
+                <div class="results-page-inner">
+                    <p class="fs-4 text-muted mb-4"><span class="fw-bold text-dark text-uppercase">lowest estimate cost:</span> <span class="fw-bold text-primary fs-3 ms-2" id="dynamic-cost-display">$3,200 / year</span></p>
+                    
+                    <div class="results-text-block mb-4">
+                        <p class="fs-5 text-muted mb-3">Your personalized evaluation has compiled premium benchmarks adjusted against standard regional baseline parameters. This initial layout helps illustrate how strategic out-of-pocket variations distribute across your active coverage lifecycle.</p>
+                        <p class="fs-5 text-muted mb-4">By balancing these anticipated premiums against active marketplace baseline tables, you can secure comprehensive supplemental protection parameters. Review the primary observations compiled below:</p>
+                        <ul class="fs-5 text-muted ps-4" style="line-height: 1.8;">
+                            <li>Out-of-pocket exposure tracks closely to local market utilization parameters.</li>
+                            <li>Prescription expenditures present optimization opportunities via generic tier structural routing.</li>
+                            <li>Annual supplemental premium adjustments stabilize significantly upon achieving threshold targets.</li>
+                        </ul>
+                    </div>
+
+                    <div class="results-table-image-grid mb-5 mt-5">
+                        <div class="table-responsive">
+                            <table class="table custom-result-table align-middle m-0 w-100">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 61.6%;">Coverage Component Category</th>
+                                        <th scope="col" style="width: 38.4%;" class="text-end">Projected Base Annual Exposure</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Medicare Part B Premium Outlays</td><td class="text-end fw-bold text-dark">$2,040</td></tr>
+                                    <tr><td>Supplemental Out-of-Pocket Insurance Layer</td><td class="text-end fw-bold text-dark">$1,150</td></tr>
+                                    <tr><td>Prescription Formulary (Tier 1-3) Deductibles</td><td class="text-end fw-bold text-dark">$760</td></tr>
+                                    <tr><td>Routine Clinical Ancillary Discretionary Fees</td><td class="text-end fw-bold text-dark">$300</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?auto=format&fit=crop&w=400&h=420&q=80" class="results-bleed-img" alt="Retirement">
+                    </div>
+
+                    <div class="results-text-block mb-4">
+                        <p class="fs-5 text-dark fw-bold mb-2">The table above presents a specialized analysis matching your reported health parameters against regional baseline models.</p>
+                        <p class="fs-6 text-muted">Annual premium outlays scale incrementally based upon geographic adjustments and active insurance tier distribution criteria.</p>
+                    </div>
+
+                    <div class="mt-5 mb-5 pt-3">
+                        <button class="btn btn-action-next fw-bold shadow-sm" style="width: auto; padding: 0 32px;" onclick="appLogic.resetApp()">update my response</button>
+                    </div>
+
+                    <div class="results-disclaimer-panel pt-4 pb-4">
+                        <h5 class="fw-bold text-dark mb-3 text-uppercase small tracking-wider">Legal Disclaimer & Methodology Baseline</h5>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem; line-height: 1.7; text-align: justify;">
+                            The financial projections, cost breakdowns, and premium evaluations rendered across this estimation engine are generated for general diagnostic modeling and informational purposes only. All baseline assessments are calculated utilizing standardized national Medicare threshold matrices and regional insurance tier indices current to global actuarial databases. Actual out-of-pocket liabilities, premiums, and deductible layers are subject to annual adjustments executed by individual carriers, state regulatory bodies, and federal statutory modifications. This data layout does not constitute a formal binding policy quote, legal counsel, or official healthcare enrollment advice. Users are strongly encouraged to cross-reference these estimates with statutory coverage schedules or independent certified market navigation specialists before confirming active long-term supplemental retirement portfolios.
+                        </p>
+                    </div>
+
+                    <div class="results-bottom-donut-layer"><div class="half-donut-fixed"></div></div>
+                </div>
+            </section>
         </div>
     </main>
 
-    <!-- Persistent Footer -->
-    <footer class="bg-dark text-white py-3 position-relative z-3 mt-auto">
-        <div class="container-fluid px-4">
-            <small>&copy; 2026 BrandLogo. Built with scalable architecture.</small>
-        </div>
+    <footer class="app-footer bg-dark text-white py-3 position-relative z-3 mt-auto">
+        <div class="container-fluid px-4"><small>&copy; 2026 BrandLogo. Built for seamless usability.</small></div>
     </footer>
 
+    <div class="modal fade custom-opaque-backdrop" id="ageWarningModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 p-3">
+                <div class="modal-body text-center py-4">
+                    <h3 class="fw-bold mb-3">remember</h3>
+                    <p class="fs-5 text-muted mb-4">Your personalized cost estimate will start at 65</p>
+                    <button type="button" class="btn btn-action-next px-5 py-2 fs-5 fw-bold" style="width: auto !important; height: auto !important;" onclick="appLogic.proceedFromModal()">ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
@@ -136,263 +423,736 @@
 
 
 
-/* Core Layout */
+
+/* ==========================================================================
+   1. GLOBAL STYLES & LAYOUT MANAGEMENT
+   ========================================================================== */
 body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.app-header {
+    border-top: 10px solid #A1C4FD !important;
 }
 
 .app-wrapper {
-  flex: 1; 
-  overflow: hidden; 
+    flex: 1; 
+    overflow-x: hidden; 
+    position: relative;
 }
 
-/* Base left-spacing */
+/* Base padding strictly for the onboarding panels (Results panel manages its own) */
 .content-offset {
-  padding-left: 220px;
+    padding-left: 140px; 
 }
 
-/* 
-* This new class shifts ONLY the welcome text UP vertically.
-* By pushing it up 12vh, it avoids the widest part of the donut perfectly.
-*/
-.welcome-shift {
-  transform: translateY(-12vh);
+.shared-alignment {
+    width: 100%;
+    max-width: 650px; 
 }
 
-/* Utilities */
+.custom-progress-width {
+    width: 100%;
+    max-width: 479px !important;
+}
+
 .transition-width { transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
 .transition-opacity { transition: opacity 0.4s ease; }
 .opacity-0 { opacity: 0; pointer-events: none; }
 
 .panel {
-  animation: slideUpFade 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: slideUpFade 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 @keyframes slideUpFade {
-  from { opacity: 0; transform: translateY(15px) translateX(0); }
-  /* We ensure translate uses base formatting so it doesn't conflict with .welcome-shift */
-  to { opacity: 1; }
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; }
 }
 
-/* --- HERO ANIMATIONS (Welcome Page) --- */
+/* ==========================================================================
+   2. TYPOGRAPHY & FIELDS (WITH VALIDATION STYLES)
+   ========================================================================== */
+p.custom-label-text {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #231F20;
+    padding: 0;
+    border: none;
+}
+
+label.custom-radio-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #231F20;
+    margin-left: 12px !important; 
+    cursor: pointer;
+}
+
+input.custom-numeric-input {
+    border: 2px solid #231F20 !important;
+    border-radius: 8px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    box-shadow: none !important;
+}
+
+input.custom-numeric-input:focus {
+    border-color: #266DE2 !important;
+}
+
+/* Slight red border on invalid input once touched */
+input.custom-numeric-input.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.form-check-input {
+    width: 1.5em;
+    height: 1.5em;
+    border: 2px solid #231F20 !important;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   3. ACTION CARDS BUTTON THEMES (#266DE2)
+   ========================================================================== */
+.btn-action-next {
+    width: 134px !important;
+    height: 54px !important;
+    background-color: #266DE2 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 20px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-action-next:hover:not(:disabled) {
+    background-color: #1a56c5 !important;
+}
+
+/* Styling for disabled next buttons */
+.btn-action-next:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #a0a0a0 !important;
+}
+
+.btn-action-back {
+    width: 134px !important;
+    height: 54px !important;
+    background-color: #231F20 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 20px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.btn-action-back:hover {
+    background-color: #000000 !important;
+}
+
+.welcome-btn-wrapper {
+    margin-top: 2.5rem;
+    margin-bottom: 5rem;
+    text-align: left; 
+}
+
+/* ==========================================================================
+   4. INTRO BACKGROUND GEOMETRICS & MATH-PERFECT SHAPES
+   ========================================================================== */
 .shape-container {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none; 
-  transition: opacity 0.5s ease;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; 
+    transition: opacity 0.6s ease;
 }
 
-/* Donut perfectly aligned to vertical center */
-.half-donut {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  border: 70px solid #000;
-  border-radius: 50%;
-  left: -200px; 
-  top: -500px; 
-  animation: dropPerpendicular 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+.welcome-blue-gradient {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 33.33%; 
+    background: linear-gradient(to right, rgba(161, 196, 253, 0.4) 0%, rgba(161, 196, 253, 0) 100%);
+    z-index: -1; 
 }
 
-@keyframes dropPerpendicular {
-  to { 
-      top: 50%; /* Exact center of the screen */
-      transform: translateY(-50%); /* Pulls it up by half its own height */
-  }
+.half-donut-fixed {
+    width: 194px;
+    height: 388px;
+    border: 80px solid #231F20;
+    border-left: none; 
+    border-radius: 0 388px 388px 0;
+    box-sizing: border-box;
 }
 
-/* Quarter Circle - Much slower, smoother fade in */
+.welcome-donut {
+    position: absolute;
+    left: 0;
+    top: 25%; 
+}
+
+.welcome-layout {
+    width: 100%;
+    max-width: 1200px !important; 
+    padding-left: 120px; 
+    margin-top: -1rem; 
+}
+
 .quarter-circle {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  background-color: #000;
-  border-radius: 0 0 0 150px;
-  top: 0;
-  right: 0;
-  opacity: 0;
-  
-  /* Changed from 1s to 2.5s for a longer fade */
-  animation: fadeInQuarter 2.5s ease-in-out forwards;
-  animation-delay: 0.4s;
+    position: absolute;
+    width: 136px;
+    height: 136px;
+    background-color: #231F20; 
+    border-radius: 0 0 0 136px;
+    top: 0; right: 0;
+    opacity: 0;
+    animation: fadeInQuarter 2.5s ease-in-out forwards;
+    animation-delay: 0.4s;
 }
 
 @keyframes fadeInQuarter {
-  to { opacity: 1; }
+    to { opacity: 1; }
 }
 
 .hero-image {
-  position: absolute;
-  bottom: 0; 
-  left: 45%; 
-  transform: translateX(-50%) translateY(100%); 
-  width: 500px;  
-  height: 160px; 
-  object-fit: cover; 
-  border-radius: 16px 16px 0 0; 
-  opacity: 0;
-  animation: slideUpImage 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-  animation-delay: 0.3s;
+    position: absolute;
+    bottom: 0; 
+    left: 45%; 
+    transform: translateX(-50%) translateY(100%); 
+    width: 500px;  
+    height: 160px; 
+    object-fit: cover; 
+    border-radius: 16px 16px 0 0; 
+    opacity: 0;
+    animation: slideUpImage 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation-delay: 0.3s;
 }
 
 @keyframes slideUpImage {
-  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
 }
 
-/* --- BOTTOM RIGHT SPIRAL LOADER --- */
+/* RESTORED: Native Mathematical SVG Path */
 .bottom-right-arcs {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 300px; 
-  height: 300px;
-  pointer-events: none;
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 296px; 
+    height: 296px;
+    pointer-events: none;
+    z-index: 0; 
 }
 
 .draw-arc {
-  fill: none;
-  stroke: #000;
-  stroke-width: 4; 
-  stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100; 
-  /* The animation is now hardcoded here. 
-     JS will clone the container to replay it */
-  animation: drawPath 1.2s ease-in-out forwards;
+    fill: none;
+    stroke: #231F20; 
+    stroke-width: 4px; 
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100; 
+    animation: drawCirclePath 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-.arc-1 { animation-delay: 0s; }
-.arc-2 { animation-delay: 0.15s; }
-.arc-3 { animation-delay: 0.3s; }
-.arc-4 { animation-delay: 0.45s; }
-
-@keyframes drawPath {
-  to { stroke-dashoffset: 0; }
+@keyframes drawCirclePath {
+    to { stroke-dashoffset: 0; }
 }
 
-/* Responsive Adjustments */
+/* ==========================================================================
+   5. RESULTS VIEW NATIVE CSS GRID LAYOUT
+   ========================================================================== */
+.custom-theme-bar {
+    background-color: #266DE2 !important;
+}
+
+/* Result Canvas completely decoupled from standard padding grids to allow full screen use */
+.results-layout-canvas {
+    width: 100% !important;
+    padding-left: 140px; 
+    padding-right: 0px; 
+}
+
+.results-text-block {
+    width: 100%;
+    max-width: 950px; 
+}
+
+/* * ABSOLUTE BLEED GRID: Keeps table max width intact while forcing the image to fly 
+ * right safely outside the box model boundaries. 
+ */
+.results-table-image-grid {
+    position: relative;
+    width: 100%;
+    max-width: 946px; /* Locks table strictly below text limit width */
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.custom-result-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-result-table thead th {
+    background-color: #266DE2 !important; 
+    color: #ffffff !important;
+    font-weight: 700;
+    padding: 14px 18px;
+    border: none;
+}
+
+.custom-result-table tbody td {
+    padding: 16px 18px;
+    color: #4a5568;
+    font-size: 1.05rem;
+    border-bottom: 1px solid #dee2e6; 
+}
+
+/* Bleed Image locked fully to the right side of the screen OUTSIDE container bounds */
+.results-bleed-img {
+    position: absolute;
+    right: -360px; /* Pulls image purely outside container walls */
+    top: 0;
+    width: 330px;
+    height: 100%; /* Matches exact height of the table */
+    object-fit: cover;
+    border-radius: 24px 0 0 24px;
+    box-shadow: -10px 10px 25px rgba(0,0,0,0.06);
+    z-index: 1;
+}
+
+.results-disclaimer-panel {
+    border-top: 2px solid #dee2e6 !important;
+    width: 100%;
+    max-width: 950px;
+}
+
+/* Bottom Donut Anchoring System */
+.results-bottom-donut-layer {
+    position: relative;
+    margin-top: 5rem;
+    margin-bottom: 3rem;
+    margin-left: -140px; /* Counter-padding pulls it exactly flush with left window wall */
+    width: 194px;
+    height: 388px;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   6. HIGHLY OPAQUE BACKDROP
+   ========================================================================== */
+.custom-opaque-backdrop.modal-backdrop.show {
+    opacity: 0.85 !important;
+    background-color: #000000 !important;
+}
+
+.custom-opaque-backdrop {
+    background: rgba(0, 0, 0, 0.85) !important;
+}
+
+/* ==========================================================================
+   7. RESPONSIVE MEDIA SHIELDS
+   ========================================================================== */
+@media (max-width: 1400px) {
+    /* If screen gets tight, right-bleed image shrinks naturally */
+    .results-bleed-img { width: 280px; right: -300px; }
+}
+
+@media (max-width: 1200px) {
+    .content-offset, .results-layout-canvas { padding-left: 80px; }
+    .welcome-layout { padding-left: 100px; }
+    .shared-alignment { max-width: calc(100% - 140px); }
+    .results-bottom-donut-layer { margin-left: -80px; }
+}
+
 @media (max-width: 992px) {
-  .content-offset { padding-left: 150px; }
-  .half-donut { width: 300px; height: 300px; border-width: 50px; left: -150px; }
-  .hero-image { left: 50%; }
+    .content-offset, .results-layout-canvas { padding-left: 40px; padding-right: 40px; }
+    .welcome-layout, .shared-alignment { max-width: 100%; padding-left: 20px; padding-right: 20px; }
+    .half-donut-fixed { display: none !important; } 
+    .results-bleed-img, .results-bottom-donut-layer { display: none !important; }
 }
 
 @media (max-width: 768px) {
-  .content-offset { padding-left: 20px; }
-  .half-donut { opacity: 0.1; } 
-  .welcome-shift { transform: translateY(-5vh); } /* Less shift on mobile */
-  .hero-image { width: 320px; height: 120px; left: 50%; }
-  .bottom-right-arcs { width: 200px; height: 200px; }
+    .content-offset, .results-layout-canvas { padding-left: 20px; padding-right: 20px; }
+    .welcome-layout { margin-top: 0; padding-left: 0; padding-right: 0; }
+    #welcome-footer-img { display: none !important; } 
+    .quarter-circle { opacity: 0.05; }
+    .bottom-right-arcs { width: 160px; height: 160px; opacity: 0.1; }
 }
 
 
 
 
-/**
- * APP STATE VARIABLES
- */
-let currentIndex = 0;
-const panels = document.querySelectorAll('.step-panel');
-const totalQuestions = panels.length - 2; 
+
+
+
 
 /**
- * NAVIGATION LOGIC
+ * HEALTHCARE ESTIMATOR SYSTEM ARCHITECTURE
+ * Clean, readable, and strictly separated functionality.
  */
-function goNext() {
-    if (currentIndex < panels.length - 1) {
-        routeToPanel(currentIndex + 1);
-    }
-}
-
-function goBack() {
-    if (currentIndex > 0) {
-        routeToPanel(currentIndex - 1);
-    }
-}
-
-/**
- * THE ROUTER 
- */
-function routeToPanel(targetIndex) {
-    currentIndex = targetIndex;
-
-    // 1. Show the correct panel, hide the rest
-    panels.forEach((panel, index) => {
-        if (index === currentIndex) {
-            panel.classList.remove('d-none');
-        } else {
-            panel.classList.add('d-none');
-        }
-    });
-
-    // 2. Determine state flags
-    const isWelcomeScreen = (currentIndex === 0);
-    const isResultsScreen = (currentIndex === panels.length - 1);
-
-    // 3. Delegate to specific update functions
-    updateHeroImages(isWelcomeScreen);
-    updateProgressBar(currentIndex, isWelcomeScreen, isResultsScreen);
-    reanimateSpiral();
-}
-
-/**
- * PROGRESS BAR LOGIC 
- */
-function updateProgressBar(index, isWelcome, isResult) {
-    const progressContainer = document.getElementById('progress-container');
-    const progressBar = document.getElementById('app-progress');
-    const progressText = document.getElementById('progress-text');
-
-    if (isWelcome) {
-        progressContainer.classList.add('opacity-0');
-        progressBar.style.width = '0%';
-        progressText.innerText = '0%';
-    } else {
-        progressContainer.classList.remove('opacity-0');
-        let percentage = 0;
-        
-        if (isResult) {
-            percentage = 100;
-        } else {
-            percentage = (index / totalQuestions) * 100;
-        }
-
-        progressBar.style.width = `${percentage}%`;
-        progressText.innerText = `${Math.round(percentage)}%`;
-    }
-}
-
-/**
- * IMAGE VISIBILITY LOGIC 
- */
-function updateHeroImages(isWelcome) {
-    const heroAnimations = document.getElementById('hero-animations');
-    if (isWelcome) {
-        heroAnimations.style.opacity = '1';
-    } else {
-        heroAnimations.style.opacity = '0';
-    }
-}
-
-/**
- * SPIRAL ANIMATION TRIGGER (Bulletproof Method)
- * By cloning the HTML element and replacing the old one, we trick the browser 
- * into thinking it is a brand new element, guaranteeing the CSS animation replays.
- */
-function reanimateSpiral() {
-    const container = document.getElementById('spiral-container');
+const appLogic = (function() {
     
-    // Check if container exists to prevent errors
-    if (container) {
-        // Clone the entire SVG container
-        const clone = container.cloneNode(true);
-        // Replace the old one in the DOM with the fresh clone
-        container.parentNode.replaceChild(clone, container);
-    }
-}
+    // Core State Variables
+    let currentIndex = 0;
+    let panels = [];
+    let modalInstance = null;
+    let totalQuestions = 0;
 
-// Initialize the application on page load
-routeToPanel(0);
+    /**
+     * INIT: Main bootup function attached to DOM load.
+     */
+    function init() {
+        // Cache DOM elements
+        panels = document.querySelectorAll('.step-panel');
+        totalQuestions = document.querySelectorAll('.question-block').length;
+        
+        // Attach input listener events to all question panels to handle real-time validation checks
+        bindValidationListeners();
+
+        // Display initial panel
+        routeToPanel(0);
+    }
+
+    /**
+     * VALIDATION BINDING: Listens for any change on required inputs and toggles the Next button
+     */
+    function bindValidationListeners() {
+        // Find all panels that represent questions (skipping welcome and results)
+        panels.forEach((panel, index) => {
+            if (index > 0 && index < panels.length - 1) {
+                
+                // Get the specific Next button for this panel
+                const nextBtn = panel.querySelector('.validation-next-btn');
+                
+                // Get all inputs (text, number, radio) inside this panel
+                const inputs = panel.querySelectorAll('input');
+                
+                // Whenever a user types or clicks a radio button, re-check the form
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => {
+                        validatePanel(panel, nextBtn);
+                    });
+                    // For radio buttons specifically, 'change' is often more reliable
+                    input.addEventListener('change', () => {
+                        validatePanel(panel, nextBtn);
+                    });
+                });
+            }
+        });
+    }
+
+    /**
+     * VALIDATION LOGIC: Checks if all required fields in the current panel are satisfied
+     */
+    function validatePanel(panel, nextBtn) {
+        if (!nextBtn) return;
+
+        let allValid = true;
+
+        // Step 1: Check number/text fields
+        const textInputs = panel.querySelectorAll('input[type="text"], input[type="number"]');
+        textInputs.forEach(input => {
+            if (input.hasAttribute('required')) {
+                // If it fails standard HTML5 validity (e.g., min/max bounds, or is empty)
+                if (!input.checkValidity()) {
+                    allValid = false;
+                    // Show bootstrap error styling
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            }
+        });
+
+        // Step 2: Check radio button groups. 
+        // We must ensure that for every unique 'name' attribute in the panel, at least one is checked.
+        const radioInputs = panel.querySelectorAll('input[type="radio"]');
+        if (radioInputs.length > 0) {
+            // Group radio inputs by their 'name' attribute to check each group individually
+            const radioGroups = {};
+            radioInputs.forEach(radio => {
+                if (!radioGroups[radio.name]) {
+                    radioGroups[radio.name] = [];
+                }
+                radioGroups[radio.name].push(radio);
+            });
+
+            // Iterate over each named group. If any group has zero checked options, panel is invalid.
+            for (const groupName in radioGroups) {
+                const group = radioGroups[groupName];
+                const isGroupRequired = group[0].hasAttribute('required');
+                
+                if (isGroupRequired) {
+                    const isAnyChecked = group.some(radio => radio.checked);
+                    if (!isAnyChecked) {
+                        allValid = false;
+                    }
+                }
+            }
+        }
+
+        // Finalize: Enable or disable the button based on the evaluation
+        nextBtn.disabled = !allValid;
+    }
+
+
+    /**
+     * API MODULE 1: Sends partial data after user finishes Q2
+     */
+    function sendPartialDataPayload() {
+        const partialData = {
+            currentAge: document.getElementById('q1_age').value || null,
+            expectedRetirementAge: document.getElementById('q2_retire_age').value || null,
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log(">>> [API TRANSMISSION 1] Sending partial onboarding data...");
+        console.log("POST /api/v1/onboarding/partial", partialData);
+
+        /* // Future implementation ready:
+        fetch('/api/v1/onboarding/partial', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(partialData)
+        }).catch(err => console.error(err));
+        */
+    }
+
+    /**
+     * API MODULE 2: Sends complete JSON payload and updates UI calculation on the final step
+     */
+    function submitFinalEstimateData() {
+        const fullPayload = {};
+        const inputs = document.querySelectorAll('input');
+        
+        // Harvest all responses globally
+        inputs.forEach(input => {
+            if (input.type === 'radio' && input.checked) {
+                fullPayload[input.name] = input.value;
+            } else if ((input.type === 'number' || input.type === 'text') && input.value) {
+                fullPayload[input.name] = input.value;
+            }
+        });
+
+        // Log the final consolidated JSON string as requested
+        console.log(">>> [API TRANSMISSION 2] Sending complete response JSON...");
+        console.log(JSON.stringify(fullPayload, null, 2));
+
+        // -- Business Logic Calculation -- 
+        // Simple demonstrative pricing calculation based on user selections
+        let calculatedBase = 3200; 
+        if (fullPayload['q5_health'] === 'Fair' || fullPayload['q5_health'] === 'Poor') calculatedBase += 1250;
+        if (fullPayload['q9_rx_cost'] === '5000 or more') calculatedBase += 950;
+
+        // Apply dynamically to the final Results DOM rendering frame
+        const costDisplay = document.getElementById('dynamic-cost-display');
+        if (costDisplay) {
+            costDisplay.innerText = `$${calculatedBase.toLocaleString()} / year`;
+        }
+    }
+
+
+    /**
+     * CORE ROUTING: Handles transitioning between panels
+     */
+    function routeToPanel(targetIndex) {
+        currentIndex = targetIndex;
+        if (!panels.length) return;
+
+        // Toggle display classes
+        panels.forEach((panel, index) => {
+            if (index === currentIndex) {
+                panel.classList.remove('d-none');
+            } else {
+                panel.classList.add('d-none');
+            }
+        });
+
+        // Determine application context state
+        const isWelcomeScreen = (currentIndex === 0);
+        const isResultsScreen = (currentIndex === panels.length - 1);
+
+        // Dispatch visual updates based on state
+        updateHeroVisibility(isWelcomeScreen, isResultsScreen);
+        updateProgressBar(currentIndex, isWelcomeScreen, isResultsScreen);
+        reanimateCanvasElements();
+    }
+
+
+    /**
+     * NEXT BUTTON HANDLER: Contains the conditional logic for specific steps
+     */
+    function handleNext() {
+        // Condition: User just finished Step 1 (Current Age)
+        if (currentIndex === 1) {
+            const currentAgeValue = document.getElementById('q1_age').value;
+            sessionStorage.setItem('cachedAgeRegistry', currentAgeValue || 0);
+            goNextStandard();
+        } 
+        
+        // Condition: User just finished Step 2 (Retirement Age)
+        else if (currentIndex === 2) {
+            const retireAgeInput = parseInt(document.getElementById('q2_retire_age').value, 10);
+            
+            // Native dispatch of partial API payload
+            sendPartialDataPayload();
+
+            // Validate against the 65-year threshold trigger for the modal
+            if (retireAgeInput < 65 && !isNaN(retireAgeInput)) {
+                const modalElement = document.getElementById('ageWarningModal');
+                if (modalElement) {
+                    if (!modalInstance) {
+                        modalInstance = new bootstrap.Modal(modalElement);
+                    }
+                    modalInstance.show();
+                } else {
+                    goNextStandard();
+                }
+            } else {
+                goNextStandard();
+            }
+        } 
+        
+        // Condition: User just clicked 'Show me my Estimate' on the final question
+        else if (currentIndex === panels.length - 2) {
+            submitFinalEstimateData();
+            goNextStandard();
+        } 
+        
+        // Condition: Standard advancement for all other typical steps
+        else {
+            goNextStandard();
+        }
+    }
+
+    function goNextStandard() {
+        if (currentIndex < panels.length - 1) {
+            routeToPanel(currentIndex + 1);
+        }
+    }
+
+    function goBack() {
+        if (currentIndex > 0) {
+            routeToPanel(currentIndex - 1);
+        }
+    }
+
+    // Called exclusively from inside the Bootstrap Modal "OK" button
+    function proceedFromModal() {
+        if (modalInstance) modalInstance.hide();
+        goNextStandard();
+    }
+
+
+    /**
+     * PROGRESS BAR LOGIC: Dynamically counts HTML .question-block elements
+     */
+    function updateProgressBar(panelIndex, isWelcome, isResult) {
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('app-progress');
+        const progressText = document.getElementById('progress-text');
+
+        if (!progressContainer || !progressBar || !progressText) return;
+
+        // Hide progress bar totally on Welcome (0) or Results (End)
+        if (isWelcome || isResult) {
+            progressContainer.classList.add('opacity-0');
+            progressBar.style.width = '0%';
+        } else {
+            progressContainer.classList.remove('opacity-0');
+            
+            let questionsAnswered = 0;
+            // Iterate through panels previously seen and count how many total questions have been cleared
+            for (let i = 1; i < panelIndex; i++) {
+                questionsAnswered += panels[i].querySelectorAll('.question-block').length;
+            }
+            
+            const percentage = (questionsAnswered / totalQuestions) * 100;
+
+            progressText.innerText = `${questionsAnswered} out of ${totalQuestions} questions answered`;
+            progressBar.style.width = `${percentage}%`;
+        }
+    }
+
+
+    /**
+     * ARTWORK CONTROLLER: Switches background objects depending on the active view
+     */
+    function updateHeroVisibility(isWelcome, isResult) {
+        const heroAnimations = document.getElementById('hero-animations');
+        const onboardingContainer = document.getElementById('onboarding-flow-container');
+        const welcomeGradient = document.querySelector('.welcome-blue-gradient');
+        const welcomeImg = document.getElementById('welcome-footer-img');
+
+        if (isWelcome) {
+            // Restore all welcoming visuals
+            if (onboardingContainer) onboardingContainer.classList.remove('d-none');
+            if (heroAnimations) heroAnimations.style.opacity = '1';
+            if (welcomeGradient) welcomeGradient.style.opacity = '1';
+            if (welcomeImg) welcomeImg.style.display = 'block';
+            
+        } else if (isResult) {
+            // Completely hide the onboarding structure and entry visuals
+            if (onboardingContainer) onboardingContainer.classList.add('d-none');
+            if (heroAnimations) heroAnimations.style.opacity = '0';
+            if (welcomeGradient) welcomeGradient.style.opacity = '0';
+            if (welcomeImg) welcomeImg.style.display = 'none';
+            
+        } else {
+            // Questionnaire Phase: Show flow, hide background visuals
+            if (onboardingContainer) onboardingContainer.classList.remove('d-none');
+            if (heroAnimations) heroAnimations.style.opacity = '0';
+        }
+    }
+
+
+    /**
+     * CANVAS UTILITY: Forces the browser to replay the SVG animation loop natively
+     */
+    function reanimateCanvasElements() {
+        const container = document.getElementById('spiral-container');
+        if (container) {
+            const clone = container.cloneNode(true);
+            container.parentNode.replaceChild(clone, container);
+        }
+    }
+
+    /**
+     * RESET MODULE: Wipes all form data and resets user to Question 1
+     */
+    function resetApp() {
+        sessionStorage.removeItem('cachedAgeRegistry');
+        
+        // Strip data from all form fields
+        document.querySelectorAll('input').forEach(input => {
+            if (input.type === 'radio') input.checked = false;
+            if (input.type === 'number' || input.type === 'text') input.value = '';
+            input.classList.remove('is-invalid');
+        });
+        
+        // Re-lock all buttons
+        document.querySelectorAll('.validation-next-btn').forEach(btn => btn.disabled = true);
+        
+        // Jump to Question 1
+        routeToPanel(1);
+    }
+
+    // Attach primary initialization hook to DOM readiness
+    window.addEventListener('DOMContentLoaded', init);
+
+    // Expose functional endpoints to the global window for HTML onclick handling
+    return {
+        handleNext,
+        goBack,
+        proceedFromModal,
+        resetApp
+    };
+
+})();
