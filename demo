@@ -1,3 +1,17 @@
+1. fade in quater cirlce on top right is not there, check and fix
+
+2. bottons on welcome and result page are shrinked down, add more with to fit all btn text
+
+3.make the welcome texts and questions section with more width, increase to maximum available. reposive for all size. Do not change progress bar keep its setup standalon
+
+4. give more veritcal spacing between questions and inputs
+
+5. more spacing between radio buttons
+
+6.resolve result page spacing too - look like the view is shrinked in size due to the image adjacen to the table 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
