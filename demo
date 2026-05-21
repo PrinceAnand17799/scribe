@@ -1,14 +1,5 @@
-1. fade in quater cirlce on top right is not there, check and fix
+- make the welcome texts and questions section with more width, increase to maximum available. reposive for all size. Do not change progress bar keep its setup standalon
 
-2. bottons on welcome and result page are shrinked down, add more with to fit all btn text
-
-3.make the welcome texts and questions section with more width, increase to maximum available. reposive for all size. Do not change progress bar keep its setup standalon
-
-4. give more veritcal spacing between questions and inputs
-
-5. more spacing between radio buttons
-
-6.resolve result page spacing too - look like the view is shrinked in size due to the image adjacen to the table 
 
 
 
@@ -18,13 +9,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Healthcare Cost Estimator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="app-header navbar bg-white shadow-sm border-bottom py-3">
+    <header class="app-header navbar bg-white shadow-sm border-bottom position-relative z-3 py-3">
         <div class="container-fluid px-4">
             <a class="navbar-brand fw-bold text-dark fs-4" href="#">BrandLogo</a>
         </div>
@@ -35,7 +29,8 @@
         <div id="hero-animations" class="shape-container z-1">
             <div class="welcome-blue-gradient"></div>
             <div class="half-donut-fixed welcome-donut"></div>
-            <img src="https://images.unsplash.com/photo-1538356111053-748a48e1acb8?auto=format&fit=crop&w=800&h=250&q=80" id="welcome-footer-img" alt="Footer" class="hero-image shadow-lg">
+            <div class="quarter-circle"></div>
+            <img src="https://images.unsplash.com/photo-1538356111053-748a48e1acb8?auto=format&fit=crop&w=800&h=250&q=80" id="welcome-footer-img" alt="Elderly Couple" class="hero-image shadow-lg">
         </div>
 
         <div id="spiral-container" class="bottom-right-arcs z-1">
@@ -50,7 +45,7 @@
 
         <div class="flex-grow-1 position-relative z-2">
             
-            <div id="onboarding-flow-container" class="content-offset pt-5">
+            <div id="onboarding-flow-container" class="content-offset pt-5 mt-2">
                 
                 <div id="progress-container" class="transition-opacity opacity-0 mb-5 custom-progress-width">
                     <div class="d-flex justify-content-between mb-2">
@@ -60,370 +55,402 @@
                         <div id="app-progress" class="progress-bar custom-theme-bar transition-width" role="progressbar" style="width: 0%;"></div>
                     </div>
                 </div>
-                
-                <section class="step-panel panel welcome-layout">
-                    <h1 class="display-4 fw-bold mb-3 text-dark">Plan today. Retire with more confidence</h1>
-                    <p class="text-muted mb-4 fs-4" style="line-height: 1.6; max-width: 900px;">Learn how informed health care choices can enhance your retirement security. By answering a few questions, we can provide a personalized estimate of your health care cost after age 65.</p>
-                    <div class="welcome-btn-wrapper">
-                        <button class="btn btn-action-next btn-lg fs-5 shadow-sm fw-bold" onclick="appLogic.handleNext()">Start Setup</button>
-                    </div>
-                </section>
-                
-                <div class="shared-alignment">
+
+                <div class="w-100 mb-2">
                     
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-4">
-                            <h3 class="fw-bold text-dark mb-4">Q1. What is your current age?</h3>
-                            <p class="text-muted mb-4 fs-6">We'll take into consideration expected increases in health care costs between now and when you retire.</p>
-                            <div class="d-flex align-items-center gap-3 mt-4 pt-2 position-relative">
-                                <input type="number" class="form-control custom-numeric-input fw-bold m-0" id="q1_age" name="q1_age" placeholder="55" min="18" max="100" style="width: 110px;" required>
-                                <p class="custom-label-text m-0">years old</p>
-                                <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid age (18-100).</div>
-                            </div>
-                        </div>
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                    <section class="step-panel panel welcome-layout w-100">
+                        <h1 class="display-4 fw-bold mb-4 text-dark">Plan today. Retire with more confidence</h1>
+                        <p class="text-muted mb-5 fs-4" style="line-height: 1.6;">Learn how informed health care choices can enhance your retirement security, potentially saving you thousands of dollars over your lifetime. By answering a few questions, we can provide a personalized estimate of your health care cost after age 65.</p>
+                        <div class="welcome-btn-wrapper">
+                            <button class="btn btn-action-next btn-lg fs-5 shadow-sm fw-bold" onclick="appLogic.handleNext()">Start Setup</button>
                         </div>
                     </section>
 
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-4">
-                            <h3 class="fw-bold text-dark mb-4">Q2. At what age do you expect to retire?</h3>
-                            <p class="text-muted mb-4 fs-6">This estimate begins at age 65, when most people become eligible for Medicare. Enter your age if you are already retired.</p>
-                            <div class="d-flex align-items-center gap-3 mt-4 pt-2 position-relative">
-                                <input type="number" class="form-control custom-numeric-input fw-bold m-0" id="q2_retire_age" name="q2_retire_age" placeholder="65" min="50" max="100" style="width: 110px;" required>
-                                <p class="custom-label-text m-0">years old</p>
-                                <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid age (50-100).</div>
-                            </div>
-                        </div>
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
-                        </div>
-                    </section>
-
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-5">
-                            <h3 class="mb-4 fw-bold text-dark">Q3. What is your gender?</h3>
-                            <div class="form-check form-check-inline me-4">
-                                <input class="form-check-input" type="radio" name="q3_gender" id="genderMale" value="Male" required>
-                                <label class="form-check-label custom-radio-label" for="genderMale">Male</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="q3_gender" id="genderFemale" value="Female" required>
-                                <label class="form-check-label custom-radio-label" for="genderFemale">Female</label>
-                            </div>
-                        </div>
-
-                        <div class="question-block mb-4">
-                            <h3 class="fw-bold text-dark mb-4">Q4. What ZIP code do you live in the most of the year?</h3>
-                            <div class="d-flex align-items-center gap-3 mt-4 pt-2 position-relative">
-                                <input type="text" pattern="\d{5}" class="form-control custom-numeric-input fw-bold m-0" id="q4_zip" name="q4_zip" placeholder="90210" minlength="5" maxlength="5" style="width: 140px;" required>
-                                <p class="custom-label-text m-0">5 Digit zip code</p>
-                                <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid 5-digit zip code.</div>
-                            </div>
-                        </div>
-
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
-                        </div>
-                    </section>
-
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-4">
-                            <h3 class="mb-4 fw-bold text-dark">Q5. Overall, compared to others your age, how would you describe your health?</h3>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q5_health" id="healthExc" value="Excellent" required>
-                                    <label class="form-check-label custom-radio-label" for="healthExc">Excellent</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q5_health" id="healthVGood" value="Very Good">
-                                    <label class="form-check-label custom-radio-label" for="healthVGood">Very Good</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q5_health" id="healthGood" value="Good">
-                                    <label class="form-check-label custom-radio-label" for="healthGood">Good</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q5_health" id="healthFair" value="Fair">
-                                    <label class="form-check-label custom-radio-label" for="healthFair">Fair</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q5_health" id="healthPoor" value="Poor">
-                                    <label class="form-check-label custom-radio-label" for="healthPoor">Poor</label>
+                    <div class="shared-alignment">
+                        
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q1. What is your current age?</h3>
+                                <p class="text-muted mb-4 fs-6">We'll take into consideration expected increases in health care costs between now and when you retire.</p>
+                                <div class="d-flex align-items-center gap-3 input-spacing-buffer position-relative">
+                                    <input type="number" class="form-control custom-numeric-input fw-bold m-0" id="q1_age" name="q1_age" placeholder="55" min="18" max="100" style="width: 110px;" required>
+                                    <p class="custom-label-text m-0">years old</p>
+                                    <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid age.</div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
-                        </div>
-                    </section>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
 
-                    <section class="step-panel panel d-none">
-                        <h3 class="fw-bold text-dark mb-4">In the past 12 months</h3>
-                        <div class="question-block mb-5">
-                            <h3 class="mb-2 fw-bold text-dark">Q6. How many times have you visited your primary care doctor?</h3>
-                            <p class="text-muted mb-3 fs-6">Do not include routine or preventive visits, such as annual checkups.</p>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-1">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv0" value="0 visits" required>
-                                    <label class="form-check-label custom-radio-label" for="pv0">0 visits</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv13" value="1-3 visits">
-                                    <label class="form-check-label custom-radio-label" for="pv13">1-3 visits</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv4" value="4 or more visits">
-                                    <label class="form-check-label custom-radio-label" for="pv4">4 or more visits</label>
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q2. At what age do you expect to retire?</h3>
+                                <p class="text-muted mb-4 fs-6">This estimate begins at age 65, when most people become eligible for Medicare. Enter your age if you are already retired.</p>
+                                <div class="d-flex align-items-center gap-3 input-spacing-buffer position-relative">
+                                    <input type="number" class="form-control custom-numeric-input fw-bold m-0" id="q2_retire_age" name="q2_retire_age" placeholder="65" min="50" max="100" style="width: 110px;" required>
+                                    <p class="custom-label-text m-0">years old</p>
+                                    <div class="invalid-feedback position-absolute" style="bottom: -25px;">Please enter a valid age.</div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
 
-                        <div class="question-block mb-4">
-                            <h3 class="mb-3 fw-bold text-dark">Q7. How many times have you visited a specialist?</h3>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-1">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv0" value="0 visits" required>
-                                    <label class="form-check-label custom-radio-label" for="sv0">0 visits</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv14" value="1-4 visits">
-                                    <label class="form-check-label custom-radio-label" for="sv14">1-4 visits</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv59" value="5-9 visits">
-                                    <label class="form-check-label custom-radio-label" for="sv59">5-9 visits</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv10" value="10 or more visits">
-                                    <label class="form-check-label custom-radio-label" for="sv10">10 or more visits</label>
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q3. What is your gender?</h3>
+                                <div class="input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q3_gender" id="genderMale" value="Male" required>
+                                        <label class="form-check-label custom-radio-label" for="genderMale">Male</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q3_gender" id="genderFemale" value="Female" required>
+                                        <label class="form-check-label custom-radio-label" for="genderFemale">Female</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
-                        </div>
-                    </section>
-
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-4">
-                            <h3 class="mb-4 fw-bold text-dark">Q8. How many times have you been admitted to the hospital in the past 12 months?</h3>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q8_hospital" id="hosp0" value="0 times" required>
-                                    <label class="form-check-label custom-radio-label" for="hosp0">0 times</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q8_hospital" id="hosp1" value="1 time">
-                                    <label class="form-check-label custom-radio-label" for="hosp1">1 time</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q8_hospital" id="hosp2" value="2 or more times">
-                                    <label class="form-check-label custom-radio-label" for="hosp2">2 or more times</label>
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q4. What ZIP code do you live in the most of the year?</h3>
+                                <div class="d-flex align-items-center gap-3 input-spacing-buffer position-relative">
+                                    <input type="text" pattern="\d{5}" class="form-control custom-numeric-input fw-bold m-0" id="q4_zip" name="q4_zip" placeholder="90210" minlength="5" maxlength="5" style="width: 140px;" required>
+                                    <p class="custom-label-text m-0">5 Digit zip code</p>
+                                    <div class="invalid-feedback position-absolute" style="bottom: -25px;">Enter a 5-digit zip.</div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
-                        </div>
-                    </section>
 
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-5">
-                            <h3 class="mb-4 fw-bold text-dark">Q9. What is your annual cost of prescription medication, before your insurance pays?</h3>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx1" value="under $250" required>
-                                    <label class="form-check-label custom-radio-label" for="rx1">Under $250</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx2" value="$250 to $1,000">
-                                    <label class="form-check-label custom-radio-label" for="rx2">$250 to $1,000</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx3" value="$1,000 to $2,500">
-                                    <label class="form-check-label custom-radio-label" for="rx3">$1,000 to $2,500</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx4" value="2500 to 5000">
-                                    <label class="form-check-label custom-radio-label" for="rx4">$2,500 to $5,000</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx5" value="5000 or more">
-                                    <label class="form-check-label custom-radio-label" for="rx5">$5,000 or more</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx6" value="don't know">
-                                    <label class="form-check-label custom-radio-label" for="rx6">Don't know</label>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
+
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q5. Overall, compared to others your age, how would you describe your health?</h3>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q5_health" id="healthExc" value="Excellent" required>
+                                        <label class="form-check-label custom-radio-label" for="healthExc">Excellent</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q5_health" id="healthVGood" value="Very Good">
+                                        <label class="form-check-label custom-radio-label" for="healthVGood">Very Good</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q5_health" id="healthGood" value="Good">
+                                        <label class="form-check-label custom-radio-label" for="healthGood">Good</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q5_health" id="healthFair" value="Fair">
+                                        <label class="form-check-label custom-radio-label" for="healthFair">Fair</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q5_health" id="healthPoor" value="Poor">
+                                        <label class="form-check-label custom-radio-label" for="healthPoor">Poor</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
 
-                        <div class="question-block mb-4">
-                            <h3 class="mb-2 fw-bold text-dark">Q10. How many different prescription medications do you take on a regular basis?</h3>
-                            <p class="text-muted mb-3 fs-6">Do not include over-the-counter medications or prescriptions you don't take regularly.</p>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc0" value="0" required>
-                                    <label class="form-check-label custom-radio-label" for="rxc0">0</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc1" value="1-2">
-                                    <label class="form-check-label custom-radio-label" for="rxc1">1-2</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc3" value="3-4">
-                                    <label class="form-check-label custom-radio-label" for="rxc3">3-4</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc5" value="5-6">
-                                    <label class="form-check-label custom-radio-label" for="rxc5">5-6</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc7" value="7 or more">
-                                    <label class="form-check-label custom-radio-label" for="rxc7">7 or more</label>
+                        <section class="step-panel panel d-none">
+                            <h3 class="fw-bold text-dark mb-5">In the past 12 months...</h3>
+                            
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-3">Q6. How many times have you visited your primary care doctor?</h3>
+                                <p class="text-muted mb-4 fs-6">Do not include routine or preventive visits, such as annual checkups</p>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv0" value="0 visits" required>
+                                        <label class="form-check-label custom-radio-label" for="pv0">0 visits</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv13" value="1-3 visits">
+                                        <label class="form-check-label custom-radio-label" for="pv13">1-3 visits</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q6_primary_visits" id="pv4" value="4 or more visits">
+                                        <label class="form-check-label custom-radio-label" for="pv4">4 or more visits</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
-                        </div>
-                    </section>
-
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-4">
-                            <h3 class="mb-2 fw-bold text-dark">Q11. Do you have a family history of serious health conditions that could affect future medical costs?</h3>
-                            <p class="text-muted mb-3 fs-6">Examples include cancer, heart diseases, or neurological conditions.</p>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q11_history" id="histYes" value="Yes" required>
-                                    <label class="form-check-label custom-radio-label" for="histYes">Yes</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q11_history" id="histNo" value="No">
-                                    <label class="form-check-label custom-radio-label" for="histNo">No</label>
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q7. How many times have you visited a specialist?</h3>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv0" value="0 visits" required>
+                                        <label class="form-check-label custom-radio-label" for="sv0">0 visits</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv14" value="1-4 visits">
+                                        <label class="form-check-label custom-radio-label" for="sv14">1-4 visits</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv59" value="5-9 visits">
+                                        <label class="form-check-label custom-radio-label" for="sv59">5-9 visits</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q7_spec_visits" id="sv10" value="10 or more visits">
+                                        <label class="form-check-label custom-radio-label" for="sv10">10+ visits</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
-                        </div>
-                    </section>
 
-                    <section class="step-panel panel d-none">
-                        <div class="question-block mb-4">
-                            <h3 class="mb-2 fw-bold text-dark">Q12. How many years of retirement would you like to plan for after age 65?</h3>
-                            <p class="text-muted mb-3 fs-6">For people similar to you, the average length of retirement after age 65 is about 20 years.</p>
-                            <div class="d-flex flex-wrap gap-4 mt-3 pt-2">
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry5" value="5 years" required>
-                                    <label class="form-check-label custom-radio-label" for="ry5">5 years</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry10" value="10 years">
-                                    <label class="form-check-label custom-radio-label" for="ry10">10 years</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry15" value="15 years">
-                                    <label class="form-check-label custom-radio-label" for="ry15">15 years</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry20" value="20 years">
-                                    <label class="form-check-label custom-radio-label" for="ry20">20 years</label>
-                                </div>
-                                <div class="form-check form-check-inline m-0">
-                                    <input class="form-check-input" type="radio" name="q12_retire_years" id="ry25" value="25+ years">
-                                    <label class="form-check-label custom-radio-label" for="ry25">25+ years</label>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
+
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q8. How many times have you been admitted to the hospital in the past 12 months?</h3>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q8_hospital" id="hosp0" value="0 times" required>
+                                        <label class="form-check-label custom-radio-label" for="hosp0">0 times</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q8_hospital" id="hosp1" value="1 time">
+                                        <label class="form-check-label custom-radio-label" for="hosp1">1 time</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q8_hospital" id="hosp2" value="2 or more times">
+                                        <label class="form-check-label custom-radio-label" for="hosp2">2 or more times</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="btn-group-row d-flex gap-3 mt-5 pb-4">
-                            <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
-                            <button class="btn btn-action-next fw-bold text-nowrap validation-next-btn" style="width: auto !important; min-width: 220px !important; padding-left: 20px; padding-right: 20px;" onclick="appLogic.handleNext()" disabled>Show me my Estimate</button>
-                        </div>
-                    </section>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
 
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-4">Q9. What is your annual cost of prescription medication, before your insurance pays?</h3>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx1" value="under $250" required>
+                                        <label class="form-check-label custom-radio-label" for="rx1">Under $250</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx2" value="$250 to $1,000">
+                                        <label class="form-check-label custom-radio-label" for="rx2">$250 to $1,000</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx3" value="$1,000 to $2,500">
+                                        <label class="form-check-label custom-radio-label" for="rx3">$1,000 to $2,500</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx4" value="2500 to 5000">
+                                        <label class="form-check-label custom-radio-label" for="rx4">$2,500 to $5,000</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx5" value="5000 or more">
+                                        <label class="form-check-label custom-radio-label" for="rx5">$5,000 or more</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q9_rx_cost" id="rx6" value="don't know">
+                                        <label class="form-check-label custom-radio-label" for="rx6">Don't know</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-3">Q10. How many different prescription medications do you take on a regular basis?</h3>
+                                <p class="text-muted mb-4 fs-6">Do not include over-the-counter medications or prescriptions you don't take regularly.</p>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc0" value="0" required>
+                                        <label class="form-check-label custom-radio-label" for="rxc0">0</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc1" value="1-2">
+                                        <label class="form-check-label custom-radio-label" for="rxc1">1-2</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc3" value="3-4">
+                                        <label class="form-check-label custom-radio-label" for="rxc3">3-4</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc5" value="5-6">
+                                        <label class="form-check-label custom-radio-label" for="rxc5">5-6</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q10_rx_count" id="rxc7" value="7 or more">
+                                        <label class="form-check-label custom-radio-label" for="rxc7">7 or more</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
+
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-3">Q11. Do you have a family history of serious health conditions that could affect future medical costs?</h3>
+                                <p class="text-muted mb-4 fs-6">Examples include cancer, heart diseases, or neurological conditions.</p>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q11_history" id="histYes" value="Yes" required>
+                                        <label class="form-check-label custom-radio-label" for="histYes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q11_history" id="histNo" value="No">
+                                        <label class="form-check-label custom-radio-label" for="histNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold validation-next-btn" onclick="appLogic.handleNext()" disabled>Next</button>
+                            </div>
+                        </section>
+
+                        <section class="step-panel panel d-none">
+                            <div class="question-block">
+                                <h3 class="fw-bold text-dark mb-3">Q12. How many years of retirement would you like to plan for after age 65?</h3>
+                                <p class="text-muted mb-4 fs-6">For people similar to you, the average length of retirement after age 65 is about 20 years.</p>
+                                <div class="d-flex flex-wrap input-spacing-buffer">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q12_retire_years" id="ry5" value="5 years" required>
+                                        <label class="form-check-label custom-radio-label" for="ry5">5 years</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q12_retire_years" id="ry10" value="10 years">
+                                        <label class="form-check-label custom-radio-label" for="ry10">10 years</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q12_retire_years" id="ry15" value="15 years">
+                                        <label class="form-check-label custom-radio-label" for="ry15">15 years</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q12_retire_years" id="ry20" value="20 years">
+                                        <label class="form-check-label custom-radio-label" for="ry20">20 years</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="q12_retire_years" id="ry25" value="25+ years">
+                                        <label class="form-check-label custom-radio-label" for="ry25">25+ years</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-group-row d-flex gap-3 pb-4">
+                                <button class="btn btn-action-back fw-bold" onclick="appLogic.goBack()">Back</button>
+                                <button class="btn btn-action-next fw-bold text-nowrap validation-next-btn" onclick="appLogic.handleNext()" disabled>Show Estimate</button>
+                            </div>
+                        </section>
+
+                    </div>
                 </div>
             </div>
 
             <section id="results-flow-container" class="step-panel panel d-none results-layout-canvas pt-5">
-                <div class="results-page-inner">
-                    <p class="fs-4 text-muted mb-4"><span class="fw-bold text-dark text-uppercase">lowest estimate cost:</span> <span class="fw-bold text-primary fs-3 ms-2" id="dynamic-cost-display">$3,200 / year</span></p>
-                    
-                    <div class="results-text-block mb-4">
-                        <p class="fs-5 text-muted mb-3">Your personalized evaluation has compiled premium benchmarks adjusted against standard regional baseline parameters. This initial layout helps illustrate how strategic out-of-pocket variations distribute across your active coverage lifecycle.</p>
-                        <p class="fs-5 text-muted mb-4">By balancing these anticipated premiums against active marketplace baseline tables, you can secure comprehensive supplemental protection parameters. Review the primary observations compiled below:</p>
-                        <ul class="fs-5 text-muted ps-4" style="line-height: 1.8;">
-                            <li>Out-of-pocket exposure tracks closely to local market utilization parameters.</li>
-                            <li>Prescription expenditures present optimization opportunities via generic tier structural routing.</li>
-                            <li>Annual supplemental premium adjustments stabilize significantly upon achieving threshold targets.</li>
-                        </ul>
-                    </div>
+                
+                <div class="results-text-block">
+                    <p class="fs-4 text-muted mb-4">
+                        <span class="fw-bold text-dark text-uppercase">lowest estimate cost:</span> 
+                        <span class="fw-bold text-primary fs-3 ms-2" id="dynamic-cost-display">$3,200 / year</span>
+                    </p>
+                    <p class="fs-5 text-muted mb-3">
+                        Your personalized evaluation has compiled premium benchmarks adjusted against standard regional baseline parameters. This initial layout helps illustrate how strategic out-of-pocket variations distribute across your active coverage lifecycle.
+                    </p>
+                    <p class="fs-5 text-muted mb-4">
+                        By balancing these anticipated premiums against active marketplace baseline tables, you can secure comprehensive supplemental protection parameters. Review the primary observations compiled below:
+                    </p>
+                    <ul class="fs-5 text-muted ps-4 mb-5" style="line-height: 1.8;">
+                        <li>Out-of-pocket exposure tracks closely to local market utilization parameters.</li>
+                        <li>Prescription expenditures present optimization opportunities via generic tier structural routing.</li>
+                        <li>Annual supplemental premium adjustments stabilize significantly upon achieving threshold targets.</li>
+                    </ul>
+                </div>
 
-                    <div class="results-table-image-grid mb-5 mt-5">
-                        <div class="table-responsive">
+                <div class="results-table-image-wrapper mt-4 mb-5">
+                    
+                    <div class="results-table-container">
+                        <div class="table-responsive m-0 p-0">
                             <table class="table custom-result-table align-middle m-0 w-100">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style="width: 61.6%;">Coverage Component Category</th>
-                                        <th scope="col" style="width: 38.4%;" class="text-end">Projected Base Annual Exposure</th>
+                                        <th scope="col" class="col-width-primary">Coverage Component Category</th>
+                                        <th scope="col" class="col-width-secondary text-end">Projected Base Annual Exposure</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>Medicare Part B Premium Outlays</td><td class="text-end fw-bold text-dark">$2,040</td></tr>
-                                    <tr><td>Supplemental Out-of-Pocket Insurance Layer</td><td class="text-end fw-bold text-dark">$1,150</td></tr>
-                                    <tr><td>Prescription Formulary (Tier 1-3) Deductibles</td><td class="text-end fw-bold text-dark">$760</td></tr>
-                                    <tr><td>Routine Clinical Ancillary Discretionary Fees</td><td class="text-end fw-bold text-dark">$300</td></tr>
+                                    <tr>
+                                        <td>Medicare Part B Premium Outlays</td>
+                                        <td class="text-end fw-bold text-dark">$2,040</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supplemental Out-of-Pocket Insurance Layer</td>
+                                        <td class="text-end fw-bold text-dark">$1,150</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Prescription Formulary (Tier 1-3) Deductibles</td>
+                                        <td class="text-end fw-bold text-dark">$760</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Routine Clinical Ancillary Discretionary Fees</td>
+                                        <td class="text-end fw-bold text-dark">$300</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <img src="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?auto=format&fit=crop&w=400&h=420&q=80" class="results-bleed-img" alt="Retirement">
                     </div>
-
-                    <div class="results-text-block mb-4">
-                        <p class="fs-5 text-dark fw-bold mb-2">The table above presents a specialized analysis matching your reported health parameters against regional baseline models.</p>
-                        <p class="fs-6 text-muted">Annual premium outlays scale incrementally based upon geographic adjustments and active insurance tier distribution criteria.</p>
-                    </div>
-
-                    <div class="mt-5 mb-5 pt-3">
-                        <button class="btn btn-action-next fw-bold shadow-sm" style="width: auto; padding: 0 32px;" onclick="appLogic.resetApp()">update my response</button>
-                    </div>
-
-                    <div class="results-disclaimer-panel pt-4 pb-4">
-                        <h5 class="fw-bold text-dark mb-3 text-uppercase small tracking-wider">Legal Disclaimer & Methodology Baseline</h5>
-                        <p class="text-muted mb-0" style="font-size: 0.9rem; line-height: 1.7; text-align: justify;">
-                            The financial projections, cost breakdowns, and premium evaluations rendered across this estimation engine are generated for general diagnostic modeling and informational purposes only. All baseline assessments are calculated utilizing standardized national Medicare threshold matrices and regional insurance tier indices current to global actuarial databases. Actual out-of-pocket liabilities, premiums, and deductible layers are subject to annual adjustments executed by individual carriers, state regulatory bodies, and federal statutory modifications. This data layout does not constitute a formal binding policy quote, legal counsel, or official healthcare enrollment advice. Users are strongly encouraged to cross-reference these estimates with statutory coverage schedules or independent certified market navigation specialists before confirming active long-term supplemental retirement portfolios.
-                        </p>
-                    </div>
-
-                    <div class="results-bottom-donut-layer"><div class="half-donut-fixed"></div></div>
+                    
+                    <img src="https://images.unsplash.com/photo-1473186578172-c141e6798cf4?auto=format&fit=crop&w=400&h=420&q=80" alt="Retirement Security" class="results-bleed-img d-none d-xl-block">
                 </div>
+
+                <div class="results-text-block mt-4 pt-3 mb-4">
+                    <p class="fs-5 text-dark fw-bold mb-2">The table above presents a specialized analysis matching your reported health parameters against regional baseline models.</p>
+                    <p class="fs-6 text-muted">Annual premium outlays scale incrementally based upon geographic adjustments and active insurance tier distribution criteria.</p>
+                </div>
+
+                <div class="btn-group-row d-flex gap-3 mt-4 mb-5 pt-2">
+                    <button class="btn btn-action-next fw-bold shadow-sm" onclick="appLogic.resetApp()">Update My Response</button>
+                </div>
+
+                <div class="results-disclaimer-panel pt-4 pb-4">
+                    <h5 class="fw-bold text-dark mb-3 text-uppercase small tracking-wider">Legal Disclaimer & Methodology Baseline</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.9rem; line-height: 1.7; text-align: justify;">
+                        The financial projections, cost breakdowns, and premium evaluations rendered across this estimation engine are generated for general diagnostic modeling and informational purposes only. All baseline assessments are calculated utilizing standardized national Medicare threshold matrices and regional insurance tier indices current to global actuarial databases. Actual out-of-pocket liabilities, premiums, and deductible layers are subject to annual adjustments executed by individual carriers, state regulatory bodies, and federal statutory modifications. This data layout does not constitute a formal binding policy quote, legal counsel, or official healthcare enrollment advice. Users are strongly encouraged to cross-reference these estimates with statutory coverage schedules or independent certified market navigation specialists before confirming active long-term supplemental retirement portfolios.
+                    </p>
+                </div>
+
+                <div class="results-bottom-donut-layer z-1">
+                    <div class="half-donut-fixed"></div>
+                </div>
+
             </section>
         </div>
     </main>
 
     <footer class="app-footer bg-dark text-white py-3 position-relative z-3 mt-auto">
-        <div class="container-fluid px-4"><small>&copy; 2026 BrandLogo. Built for seamless usability.</small></div>
+        <div class="container-fluid px-4">
+            <small>&copy; 2026 BrandLogo. Built for seamless usability.</small>
+        </div>
     </footer>
 
     <div class="modal fade custom-opaque-backdrop" id="ageWarningModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 p-3">
                 <div class="modal-body text-center py-4">
-                    <h3 class="fw-bold mb-3">remember</h3>
+                    <h3 class="fw-bold mb-3">Remember</h3>
                     <p class="fs-5 text-muted mb-4">Your personalized cost estimate will start at 65</p>
-                    <button type="button" class="btn btn-action-next px-5 py-2 fs-5 fw-bold" style="width: auto !important; height: auto !important;" onclick="appLogic.proceedFromModal()">ok</button>
+                    <button type="button" class="btn btn-action-next px-5 py-2 fs-5 fw-bold" onclick="appLogic.proceedFromModal()">OK</button>
                 </div>
             </div>
         </div>
@@ -433,6 +460,14 @@
     <script src="app.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
@@ -459,14 +494,14 @@ body {
     position: relative;
 }
 
-/* Base padding strictly for the onboarding panels (Results panel manages its own) */
 .content-offset {
     padding-left: 140px; 
 }
 
+/* Expanded maximum widths to use screen efficiently */
 .shared-alignment {
     width: 100%;
-    max-width: 650px; 
+    max-width: 1200px; 
 }
 
 .custom-progress-width {
@@ -487,9 +522,19 @@ body {
     to { opacity: 1; }
 }
 
+
 /* ==========================================================================
-   2. TYPOGRAPHY & FIELDS (WITH VALIDATION STYLES)
+   2. TYPOGRAPHY, INPUTS, AND SPACING
    ========================================================================== */
+/* Generous vertical spacing applied to question blocks and inputs */
+.question-block {
+    margin-bottom: 4rem !important; 
+}
+
+.input-spacing-buffer {
+    margin-top: 2rem !important;
+}
+
 p.custom-label-text {
     font-size: 1.05rem;
     font-weight: 700;
@@ -518,7 +563,6 @@ input.custom-numeric-input:focus {
     border-color: #266DE2 !important;
 }
 
-/* Slight red border on invalid input once touched */
 input.custom-numeric-input.is-invalid {
     border-color: #dc3545 !important;
 }
@@ -530,12 +574,23 @@ input.custom-numeric-input.is-invalid {
     cursor: pointer;
 }
 
+/* Wide spacing between radio items */
+.form-check-inline {
+    margin-right: 3.5rem !important; 
+    margin-bottom: 1.5rem !important;
+}
+
+
 /* ==========================================================================
-   3. ACTION CARDS BUTTON THEMES (#266DE2)
+   3. ACTION BUTTON THEMES (#266DE2)
    ========================================================================== */
+/* Buttons use auto-width with padding to comfortably fit all text lengths */
 .btn-action-next {
-    width: 134px !important;
+    min-width: 140px; 
+    width: auto !important; 
     height: 54px !important;
+    padding-left: 32px !important;
+    padding-right: 32px !important;
     background-color: #266DE2 !important;
     color: #ffffff !important;
     border: none !important;
@@ -550,7 +605,6 @@ input.custom-numeric-input.is-invalid {
     background-color: #1a56c5 !important;
 }
 
-/* Styling for disabled next buttons */
 .btn-action-next:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -558,8 +612,11 @@ input.custom-numeric-input.is-invalid {
 }
 
 .btn-action-back {
-    width: 134px !important;
+    min-width: 140px; 
+    width: auto !important; 
     height: 54px !important;
+    padding-left: 32px !important;
+    padding-right: 32px !important;
     background-color: #231F20 !important;
     color: #ffffff !important;
     border: none !important;
@@ -575,13 +632,14 @@ input.custom-numeric-input.is-invalid {
 }
 
 .welcome-btn-wrapper {
-    margin-top: 2.5rem;
+    margin-top: 3.5rem;
     margin-bottom: 5rem;
     text-align: left; 
 }
 
+
 /* ==========================================================================
-   4. INTRO BACKGROUND GEOMETRICS & MATH-PERFECT SHAPES
+   4. INTRO BACKGROUND SHAPES
    ========================================================================== */
 .shape-container {
     position: absolute;
@@ -620,6 +678,7 @@ input.custom-numeric-input.is-invalid {
     margin-top: -1rem; 
 }
 
+/* Restored Top-Right Quarter Circle */
 .quarter-circle {
     position: absolute;
     width: 136px;
@@ -628,8 +687,9 @@ input.custom-numeric-input.is-invalid {
     border-radius: 0 0 0 136px;
     top: 0; right: 0;
     opacity: 0;
-    animation: fadeInQuarter 2.5s ease-in-out forwards;
-    animation-delay: 0.4s;
+    animation: fadeInQuarter 1s ease-in-out forwards;
+    animation-delay: 0.5s;
+    z-index: 0;
 }
 
 @keyframes fadeInQuarter {
@@ -654,7 +714,7 @@ input.custom-numeric-input.is-invalid {
     to { transform: translateX(-50%) translateY(0); opacity: 1; }
 }
 
-/* RESTORED: Native Mathematical SVG Path */
+/* Restored Perfect Arc Spiral Math */
 .bottom-right-arcs {
     position: absolute;
     bottom: 0; right: 0;
@@ -671,42 +731,51 @@ input.custom-numeric-input.is-invalid {
     stroke-linecap: round;
     stroke-dasharray: 100;
     stroke-dashoffset: 100; 
-    animation: drawCirclePath 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: drawPath 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-@keyframes drawCirclePath {
+@keyframes drawPath {
     to { stroke-dashoffset: 0; }
 }
 
+
 /* ==========================================================================
-   5. RESULTS VIEW NATIVE CSS GRID LAYOUT
+   5. RESULTS VIEW: FLEXBOX LAYOUT (Solves all page squishing)
    ========================================================================== */
 .custom-theme-bar {
     background-color: #266DE2 !important;
 }
 
-/* Result Canvas completely decoupled from standard padding grids to allow full screen use */
 .results-layout-canvas {
     width: 100% !important;
+    max-width: 100% !important;
     padding-left: 140px; 
     padding-right: 0px; 
 }
 
 .results-text-block {
     width: 100%;
-    max-width: 950px; 
+    max-width: 1100px; 
 }
 
-/* * ABSOLUTE BLEED GRID: Keeps table max width intact while forcing the image to fly 
- * right safely outside the box model boundaries. 
- */
-.results-table-image-grid {
-    position: relative;
+/* Flexbox guarantees the table takes natural available space, while the image locks cleanly to the right */
+.results-table-image-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
     width: 100%;
-    max-width: 946px; /* Locks table strictly below text limit width */
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    max-width: 100%; 
+    gap: 40px;
 }
+
+.results-table-container {
+    flex: 1; 
+    max-width: 1000px; 
+}
+
+.col-width-primary { width: 61.63% !important; }
+.col-width-secondary { width: 38.37% !important; }
 
 .custom-result-table {
     width: 100%;
@@ -728,38 +797,35 @@ input.custom-numeric-input.is-invalid {
     border-bottom: 1px solid #dee2e6; 
 }
 
-/* Bleed Image locked fully to the right side of the screen OUTSIDE container bounds */
+/* Bleed Image fixed natively inside flex layout. No absolute placement required! */
 .results-bleed-img {
-    position: absolute;
-    right: -360px; /* Pulls image purely outside container walls */
-    top: 0;
+    flex: 0 0 330px; 
     width: 330px;
-    height: 100%; /* Matches exact height of the table */
+    height: 342px; 
     object-fit: cover;
     border-radius: 24px 0 0 24px;
     box-shadow: -10px 10px 25px rgba(0,0,0,0.06);
-    z-index: 1;
 }
 
 .results-disclaimer-panel {
     border-top: 2px solid #dee2e6 !important;
     width: 100%;
-    max-width: 950px;
+    max-width: 1100px;
 }
 
-/* Bottom Donut Anchoring System */
 .results-bottom-donut-layer {
     position: relative;
     margin-top: 5rem;
     margin-bottom: 3rem;
-    margin-left: -140px; /* Counter-padding pulls it exactly flush with left window wall */
+    margin-left: -140px; 
     width: 194px;
     height: 388px;
     pointer-events: none;
 }
 
+
 /* ==========================================================================
-   6. HIGHLY OPAQUE BACKDROP
+   6. OPAQUE BACKDROP
    ========================================================================== */
 .custom-opaque-backdrop.modal-backdrop.show {
     opacity: 0.85 !important;
@@ -770,17 +836,17 @@ input.custom-numeric-input.is-invalid {
     background: rgba(0, 0, 0, 0.85) !important;
 }
 
+
 /* ==========================================================================
-   7. RESPONSIVE MEDIA SHIELDS
+   7. RESPONSIVE SHIELDS
    ========================================================================== */
 @media (max-width: 1400px) {
-    /* If screen gets tight, right-bleed image shrinks naturally */
-    .results-bleed-img { width: 280px; right: -300px; }
+    .results-bleed-img { flex: 0 0 280px; width: 280px; }
 }
 
 @media (max-width: 1200px) {
     .content-offset, .results-layout-canvas { padding-left: 80px; }
-    .welcome-layout { padding-left: 100px; }
+    .welcome-layout { padding-left: 80px; }
     .shared-alignment { max-width: calc(100% - 140px); }
     .results-bottom-donut-layer { margin-left: -80px; }
 }
@@ -799,6 +865,19 @@ input.custom-numeric-input.is-invalid {
     .quarter-circle { opacity: 0.05; }
     .bottom-right-arcs { width: 160px; height: 160px; opacity: 0.1; }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
